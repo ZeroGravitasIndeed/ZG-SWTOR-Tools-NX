@@ -39,7 +39,7 @@ class ZGSWTOR_OT_quickscale(bpy.types.Operator):
 
         bpy.context.window.cursor_set("WAIT")
 
-        scale = bpy.context.scene.zgswtor_quickscale_factor
+        scale = bpy.context.scene.zgswtor_QS_quickscale_factor
 
         selected_objects = [obj for obj in bpy.context.selected_objects if not obj.parent]
 
@@ -62,7 +62,7 @@ class ZGSWTOR_OT_quickscale(bpy.types.Operator):
 # Registrations
 
 def register():
-    bpy.types.Scene.zgswtor_quickscale_factor = bpy.props.FloatProperty(
+    bpy.types.Scene.zgswtor_QS_quickscale_factor = bpy.props.FloatProperty(
         name="",
         description="Scaling Factor. Recommended values are:\n\n- 10 for simplicity (characters look superhero-like tall, over 2 m.).\n\n- Around 8 for accuracy (characters show more realistic heights)",
         min = 1.0,
@@ -76,7 +76,7 @@ def register():
     bpy.utils.register_class(ZGSWTOR_OT_quickscale)
 
 def unregister():
-    del bpy.types.Scene.zgswtor_quickscale_factor
+    del bpy.types.Scene.zgswtor_QS_quickscale_factor
     bpy.utils.unregister_class(ZGSWTOR_OT_quickscale)
 
 

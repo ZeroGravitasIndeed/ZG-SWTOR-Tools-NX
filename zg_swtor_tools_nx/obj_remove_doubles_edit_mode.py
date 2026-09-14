@@ -32,7 +32,7 @@ class ZGSWTOR_OT_remove_doubles_edit_mode(bpy.types.Operator):
         obj=context.selected_objects[0]
 
         # Checking if we must handle SWTOR objects' custom properties about their meshes' scales
-        use_gr2_scale_custom_prop = context.preferences.addons["zg_swtor_tools"].preferences.use_gr2_scale_custom_prop
+        use_gr2_scale_custom_prop = context.preferences.addons["zg_swtor_tools_nx"].preferences.use_gr2_scale_custom_prop
 
         # Checking if we are dealing with a .gr2 Add-on with scaling parameters
         checks = requirements_checks()

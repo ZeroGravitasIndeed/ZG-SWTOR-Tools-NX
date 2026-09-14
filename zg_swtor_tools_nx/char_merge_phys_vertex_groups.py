@@ -154,9 +154,9 @@ class ZGSWTOR_OT_merge_phys_vertex_groups(bpy.types.Operator):
             objs = [obj for obj in bpy.data.objects if obj.type == "MESH"]
     
         
-        self.delete_originals = context.scene.MPVG_delete_originals
-        self.use_best_guess   = context.scene.MPVG_use_best_guess
-        self.vg_names_common_part  = context.scene.MPVG_vg_names_common_part
+        self.delete_originals = context.scene.zgswtor_MPVG_delete_originals
+        self.use_best_guess   = context.scene.zgswtor_MPVG_use_best_guess
+        self.vg_names_common_part  = context.scene.zgswtor_MPVG_vg_names_common_part
 
 
         objs_with_no_phys_vgs_merged = 0
@@ -217,19 +217,19 @@ class ZGSWTOR_OT_merge_phys_vertex_groups(bpy.types.Operator):
 def register():
     bpy.utils.register_class(ZGSWTOR_OT_merge_phys_vertex_groups)
 
-    bpy.types.Scene.MPVG_delete_originals = bpy.props.BoolProperty(
+    bpy.types.Scene.zgswtor_MPVG_delete_originals = bpy.props.BoolProperty(
         name="Delete source Vertex groups",
         description="Delete the Vertex Groups with a 'newton' in their names after their vertices\nhave been copied to a new 'physics' Vertex Group",
         default=False,
     )
 
-    bpy.types.Scene.MPVG_use_best_guess = bpy.props.BoolProperty(
+    bpy.types.Scene.zgswtor_MPVG_use_best_guess = bpy.props.BoolProperty(
         name="Best Guess",
         description="Guess which Vertex Groups are physics bones-related by looking for VG names\nending with a '_nn' (such as 'newtonparticle_lekku_02', 'newtonparticle_lekku_06',\netc.).\n\nChecking the results for any mistake in the Console is strongly advised",
         default=True,
     )
 
-    bpy.types.Scene.MPVG_vg_names_common_part = bpy.props.StringProperty(
+    bpy.types.Scene.zgswtor_MPVG_vg_names_common_part = bpy.props.StringProperty(
         name="Common Text In Vertex Groups' Names",
         description="Vertex Groups whose names contain this text will be processed",
         default="",
@@ -238,9 +238,9 @@ def register():
 def unregister():
     bpy.utils.unregister_class(ZGSWTOR_OT_merge_phys_vertex_groups)
     
-    del bpy.types.Scene.MPVG_delete_originals
-    del bpy.types.Scene.MPVG_use_best_guess
-    del bpy.types.Scene.MPVG_vg_names_common_part
+    del bpy.types.Scene.zgswtor_MPVG_delete_originals
+    del bpy.types.Scene.zgswtor_MPVG_use_best_guess
+    del bpy.types.Scene.zgswtor_MPVG_vg_names_common_part
 
 
 if __name__ == "__main__":

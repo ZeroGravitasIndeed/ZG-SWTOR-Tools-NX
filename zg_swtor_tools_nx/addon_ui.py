@@ -107,7 +107,7 @@ class ZGSWTOR_PT_status_3dview(bpy.types.Panel):
         tool_section = layout.column()
         tool_section.scale_y = Y_SCALING_GRAL
 
-        zg_swtor_tools_prefs = context.preferences.addons["zg_swtor_tools"].preferences
+        zg_swtor_tools_prefs = context.preferences.addons["zg_swtor_tools_nx"].preferences
         tool_section.prop(zg_swtor_tools_prefs,"use_gr2_scale_custom_prop", text="Use SWTOR Obj. Scale Data")
         # ------------------------
         # endregion
@@ -154,7 +154,7 @@ class ZGSWTOR_PT_area_tools(bpy.types.Panel):
         disable_sel = col_right.operator("zgswtor.exclude_include_collections", text="All")
         disable_sel.action = "ENABLE_ALL"
 
-        tool_section.prop(context.scene, "EAC_recursive", text="Include Their Offspring")
+        tool_section.prop(context.scene, "zgswtor_CEI_recursive", text="Include Their Offspring")
         # ------------------------
         # endregion
 
@@ -179,12 +179,12 @@ class ZGSWTOR_PT_area_tools(bpy.types.Panel):
         col_left, col_right = split.column(align=True).row(align=True), split.column(align=True).row(align=True)
         col_left_split=col_left.split(factor=0.68, align=True)
         col_left_split.label(text="Separator")
-        col_left_split.prop(context.scene, "GC_coll_grouping_separator", text="")
-        col_right.prop(context.scene, "GC_coll_grouping_position", text="Pos.")
+        col_left_split.prop(context.scene, "zgswtor_ACGBN_coll_grouping_separator", text="")
+        col_right.prop(context.scene, "zgswtor_ACGBN_coll_grouping_position", text="Pos.")
         
-        tool_section.prop(context.scene, "GC_disable_collections", text="Disable Collections After Grouping")
+        tool_section.prop(context.scene, "zgswtor_ACGBN_disable_collections", text="Disable Collections After Grouping")
         
-        tool_section.prop(context.scene, "GC_sort_collections", text="Keep Collections Sorted")
+        tool_section.prop(context.scene, "zgswtor_ACGBN_sort_collections", text="Keep Collections Sorted")
         # ------------------------
         # endregion
 
@@ -264,8 +264,8 @@ class ZGSWTOR_PT_character_tools(bpy.types.Panel):
         
         col=tool_section.column(align=False)
         col.operator("zgswtor.prefixer", text="Prefix Selected Items")
-        col.prop(context.scene, "zg_prefix", text = "Prefix")
-        col.prop(context.scene, "zg_prefix_mats_skeletons_bool", text="Materials & Skeletons Too")
+        col.prop(context.scene, "zgswtor_CP_prefix", text = "Prefix")
+        col.prop(context.scene, "zgswtor_CP_prefix_mats_skeletons", text="Materials & Skeletons Too")
         # ------------------------
         # endregion
 
@@ -292,12 +292,12 @@ class ZGSWTOR_PT_character_tools(bpy.types.Panel):
         merge_vg_sel = col_right.operator("zgswtor.merge_phys_vgs", text="All")
         merge_vg_sel.use_selection_only = False
                 
-        col.prop(context.scene, "MPVG_use_best_guess", text="Best-Guess Their Names")
+        col.prop(context.scene, "zgswtor_MPVG_use_best_guess", text="Best-Guess Their Names")
         dimmable_field = col.row()
-        dimmable_field.prop(context.scene, "MPVG_vg_names_common_part", text="Match")
-        dimmable_field.enabled = not context.scene.MPVG_use_best_guess
+        dimmable_field.prop(context.scene, "zgswtor_MPVG_vg_names_common_part", text="Match")
+        dimmable_field.enabled = not context.scene.zgswtor_MPVG_use_best_guess
 
-        col.prop(context.scene, "MPVG_delete_originals", text="Delete Original Phys. VGs.")
+        col.prop(context.scene, "zgswtor_MPVG_delete_originals", text="Delete Original Phys. VGs.")
         # ------------------------
         # endregion
 
@@ -361,9 +361,9 @@ class ZGSWTOR_PT_materials_tools(bpy.types.Panel):
         col_right.enabled = len(bpy.data.objects) != 0
         process_mats_all.use_selection_only = False
 
-        process_mats_sel = tool_section.prop(context.scene, "use_deprecated_materials", text="Use Deprecated Materials")
-        process_mats_sel = tool_section.prop(context.scene, "use_overwrite_bool", text="Overwrite Materials")
-        process_mats_all = tool_section.prop(context.scene, "use_collect_colliders_bool", text="Collect Collider Objects")
+        process_mats_sel = tool_section.prop(context.scene, "zgswtor_PNM_use_deprecated_materials", text="Use Deprecated Materials")
+        process_mats_sel = tool_section.prop(context.scene, "zgswtor_PNM_use_overwrite", text="Overwrite Materials")
+        process_mats_all = tool_section.prop(context.scene, "zgswtor_PNM_use_collect_colliders", text="Collect Collider Objects")
         # ------------------------
         # endregion
 
@@ -394,16 +394,16 @@ class ZGSWTOR_PT_materials_tools(bpy.types.Panel):
         process_mats_all.use_selection_only = False
         
         dimmable_row1 = tool_section.row(align=True)
-        dimmable_row1.enabled = context.scene.enable_adding_custom_shaders
+        dimmable_row1.enabled = context.scene.zgswtor_ACESS_enable_adding_custom_shaders
         dimmable_row1.operator("zgswtor.add_custom_external_swtor_shaders", text="Just Add Shaders To Project")
         
         dimmable_row2 = tool_section.row(align=True)
-        dimmable_row2.enabled = context.scene.enable_linking_custom_shaders
-        dimmable_row2.prop(context.scene, "use_linking_bool", text="Link instead of Append")
+        dimmable_row2.enabled = context.scene.zgswtor_ACESS_enable_linking_custom_shaders
+        dimmable_row2.prop(context.scene, "zgswtor_ACESS_use_linking", text="Link instead of Append")
         
         dimmable_row3 = tool_section.row(align=True)
         dimmable_row3.enabled = checks["gr2"]
-        dimmable_row3.prop(context.scene, "preserve_atroxa_bool", text="Preserve Original Shaders")
+        dimmable_row3.prop(context.scene, "zgswtor_CSS_preserve_atroxa_shaders", text="Preserve Original Shaders")
         # ------------------------
         # endregion
 
@@ -420,8 +420,8 @@ class ZGSWTOR_PT_materials_tools(bpy.types.Panel):
         tool_section.operator("zgswtor.skinsettings_ng_in_3d_viewer", text="Create & Apply To Selection")
         split=tool_section.split(factor=0.52, align=True)
         split.label(text="PC-NPC name")
-        split.prop(context.scene, "apply_skinsettings_name", text="")
-        tool_section.prop(context.scene, "apply_skinsettings_twilek", text="Override Twi'lek Gloss")
+        split.prop(context.scene, "zgswtor_ASS_apply_skinsettings_name", text="")
+        tool_section.prop(context.scene, "zgswtor_ASS_apply_skinsettings_twilek", text="Override Twi'lek Gloss")
         # ------------------------
         # endregion
 
@@ -442,18 +442,18 @@ class ZGSWTOR_PT_materials_tools(bpy.types.Panel):
         split.scale_y = 0.7
         
         col = split.column(align=True)
-        col.prop(context.scene, "scsv_specular_checkbox", text="Specular Str.")
-        col.prop(context.scene, "scsv_roughness_checkbox", text="Roughness Fac.")
-        col.prop(context.scene, "scsv_emission_checkbox", text="Emission Str.")
-        col.prop(context.scene, "scsv_saturation_checkbox", text="Emission Sat.")
-        col.prop(context.scene, "scsv_normal_checkbox", text="Normal Str.")
+        col.prop(context.scene, "zgswtor_SCSV_specular_checkbox", text="Specular Str.")
+        col.prop(context.scene, "zgswtor_SCSV_roughness_checkbox", text="Roughness Fac.")
+        col.prop(context.scene, "zgswtor_SCSV_emission_checkbox", text="Emission Str.")
+        col.prop(context.scene, "zgswtor_SCSV_saturation_checkbox", text="Emission Sat.")
+        col.prop(context.scene, "zgswtor_SCSV_normal_checkbox", text="Normal Str.")
         
         col = split.column(align=True)
-        col.prop(context.scene, "scsv_specular", text="")
-        col.prop(context.scene, "scsv_roughness", text="")
-        col.prop(context.scene, "scsv_emission", text="")
-        col.prop(context.scene, "scsv_saturation", text="")
-        col.prop(context.scene, "scsv_normal", text="")
+        col.prop(context.scene, "zgswtor_SCSV_specular", text="")
+        col.prop(context.scene, "zgswtor_SCSV_roughness", text="")
+        col.prop(context.scene, "zgswtor_SCSV_emission", text="")
+        col.prop(context.scene, "zgswtor_SCSV_saturation", text="")
+        col.prop(context.scene, "zgswtor_SCSV_normal", text="")
 
         tool_section.label(text="• Material-Level Settings:")
         split=tool_section.split(factor=0.65)
@@ -461,26 +461,26 @@ class ZGSWTOR_PT_materials_tools(bpy.types.Panel):
         
         col = split.column(align=True)
         if checks["blender_version"] < 4.2:
-            col.prop(context.scene, "scsv_blend_mode_checkbox", text="Alpha Mode")
-        col.prop(context.scene, "scsv_show_backface_checkbox", text="Show Backface")
+            col.prop(context.scene, "zgswtor_SCSV_blend_mode_checkbox", text="Alpha Mode")
+        col.prop(context.scene, "zgswtor_SCSV_show_backface_checkbox", text="Show Backface")
 
         col = split.column(align=True)
         if checks["blender_version"] < 4.2:
-            col.prop(context.scene, "scsv_blend_mode", text="")
-        col.prop(context.scene, "scsv_show_backface", text="")
+            col.prop(context.scene, "zgswtor_SCSV_blend_mode", text="")
+        col.prop(context.scene, "zgswtor_SCSV_show_backface", text="")
 
         tool_section.separator(factor=1)
 
         split = tool_section.split(factor= 0.7, align=True)
         col_left, col_right = split.column(align=True), split.column(align=True)
 
-        scsv_to_selection = col_left.operator("zgswtor.set_custom_shaders_values", text="Selected Objects")
+        zgswtor_SCSV_to_selection = col_left.operator("zgswtor.set_custom_shaders_values", text="Selected Objects")
         col_left.enabled = len(bpy.context.selected_objects) != 0
-        scsv_to_selection.use_selection_only = True
+        zgswtor_SCSV_to_selection.use_selection_only = True
 
-        scsv_to_all = col_right.operator("zgswtor.set_custom_shaders_values", text="All")
+        zgswtor_SCSV_to_all = col_right.operator("zgswtor.set_custom_shaders_values", text="All")
         col_right.enabled = len(bpy.data.objects) != 0
-        scsv_to_all.use_selection_only = False
+        zgswtor_SCSV_to_all.use_selection_only = False
         # ------------------------
         # endregion
 
@@ -541,7 +541,7 @@ class ZGSWTOR_PT_objects_tools(bpy.types.Panel):
         row.operator("zgswtor.quickscale", text="Down").action = "DOWNSCALE"
         in_row = row.row()
         in_row.scale_x = 0.9  # for a non-50% contiguous row region
-        in_row.prop(context.scene, "zgswtor_quickscale_factor", text="",)
+        in_row.prop(context.scene, "zgswtor_QS_quickscale_factor", text="",)
         row.operator("zgswtor.quickscale", text="Up").action = "UPSCALE"
 
         tool_section.separator(factor=2)
@@ -575,7 +575,7 @@ class ZGSWTOR_PT_objects_tools(bpy.types.Panel):
 
 
         row = tool_section.row(align=True)
-        row.prop(context.scene, "OAT_set_custom_props", text="Annotate Objs.")
+        row.prop(context.scene, "zgswtor_OAT_set_custom_props", text="Annotate Objs.")
 
 
         # Show the active object's transforms data as a representative
@@ -710,12 +710,12 @@ class ZGSWTOR_PT_objects_tools(bpy.types.Panel):
         grid.operator("zgswtor.set_modifiers", text="Solidify").action = "add_solidify"
         grid.operator("zgswtor.set_modifiers", text="Smooth Corrective").action = "add_smooth_corrective"
         shbutton=grid.row(align=True)
-        shbutton.active = (bpy.context.scene.ZGshrinkwrap_target is not None)
+        shbutton.active = (bpy.context.scene.zgswtor_SM_shrinkwrap_target is not None)
         shbutton.operator("zgswtor.set_modifiers", text="Shrinkwrap").action = "add_shrinkwrap"
         row = col.row(align=True)
         split = row.split(factor=0.57, align=True)
         split.label(text="Shrinkw. Target")
-        split.prop(context.scene, "ZGshrinkwrap_target", text="")
+        split.prop(context.scene, "zgswtor_SM_shrinkwrap_target", text="")
 
         row = col.row()
         row.operator("zgswtor.set_modifiers", text="Remove These Modifiers").action = "remove_them"
@@ -850,13 +850,13 @@ class ZGSWTOR_PT_baking_tools(bpy.types.Panel):
 
         process_mats_sel = col_left.operator("zgswtor.convert_to_legacy_materials", text="Selected Objects")
         col_left.enabled = len(bpy.context.selected_objects) != 0
-        process_mats_sel.clm_use_selection_only = True
+        process_mats_sel.zgswtor_CTLM_use_selection_only = True
 
         process_mats_all = col_right.operator("zgswtor.convert_to_legacy_materials", text="All")
         col_right.enabled = len(bpy.data.objects) != 0
-        process_mats_all.clm_use_selection_only = False
+        process_mats_all.zgswtor_CTLM_use_selection_only = False
 
-        tool_section.prop(context.scene, "zg_add_baking_targets_bool", text="Add Baking Target Nodes")
+        tool_section.prop(context.scene, "zgswtor_CTLM_add_baking_targets", text="Add Baking Target Nodes")
         # ------------------------
         # endregion
 
@@ -875,8 +875,8 @@ class ZGSWTOR_PT_baking_tools(bpy.types.Panel):
         tool_heading.label(text="(No Text Exports All Images)")
         tool_controls = tool_section.column(align=False)
         tool_controls.scale_y = Y_SCALING_GRAL
-        tool_controls.prop(context.scene, "SBI_common_text_in_names", text="")
-        tool_controls.prop(context.scene, "SBI_case_sensitive", text="Match Upper/Lower Case")
+        tool_controls.prop(context.scene, "zgswtor_SBI_common_text_in_names", text="")
+        tool_controls.prop(context.scene, "zgswtor_SBI_case_sensitive", text="Match Upper/Lower Case")
         tool_controls.operator("zgswtor.save_images_by_substring", text="Choose Destination Folder")
         # ------------------------
         # endregion
@@ -994,7 +994,7 @@ class ZGSWTOR_PT_shader_tools(bpy.types.Panel):
         process_mats_sel = tool_section.operator("zgswtor.process_named_mats", text="Process This Material")
         if bpy.context.material:
             process_mats_sel.convert_this_material = bpy.context.material.name
-        process_mats_sel.use_overwrite_bool = True
+        process_mats_sel.use_overwrite = True
         # ------------------------
         # endregion
 
@@ -1012,7 +1012,7 @@ class ZGSWTOR_PT_shader_tools(bpy.types.Panel):
         in_row = row.row(align=False)  # for setting a non-50% contiguous row region
         in_row.scale_x = 0.90  # Percentage of a full half row
         in_row.label(text="PC-NPC Name")
-        row.prop(context.scene, "use_skinsettings_name", text="")
+        row.prop(context.scene, "zgswtor_SSNG_use_skinsettings_name", text="")
 
         # tool_section.operator("zgswtor.skinsettings_ng_in_shader_editor", text="Add existing Skin Settings Group").action="ADD_EXISTING_SKINSETTINGS"
         # build skinsettings nodegroups list
@@ -1031,7 +1031,7 @@ class ZGSWTOR_PT_shader_tools(bpy.types.Panel):
 
         tool_section.operator("zgswtor.skinsettings_ng_in_shader_editor", text="Copy ZG SkinB Data to Skin Settings Group").action="COPY_TO_SKINSETTINGS"
         tool_section.operator("zgswtor.skinsettings_ng_in_shader_editor", text="Connect Skin Group to ZG SkinB Shader").action="CONNECT_SKINSETTINGS"
-        tool_section.prop(context.scene,"use_skinsettings_twilek", text="Override Twi'lek GlossMap")
+        tool_section.prop(context.scene,"zgswtor_SSNG_use_skinsettings_twilek", text="Override Twi'lek GlossMap")
         tool_section.operator("zgswtor.skinsettings_ng_in_shader_editor", text="Disconnect Skin Group from ZG SkinB Shader").action="DISCONNECT_SKINSETTINGS"
 
         tool_section = layout.box()

@@ -95,10 +95,10 @@ class ZGSWTOR_OT_group_collections(bpy.types.Operator):
         bpy.context.window.cursor_set("WAIT")
 
 
-        self.position = context.scene.GC_coll_grouping_position
-        self.separator = context.scene.GC_coll_grouping_separator
-        self.disable_collections = context.scene.GC_disable_collections
-        self.sort_collections = context.scene.GC_sort_collections
+        self.position = context.scene.zgswtor_ACGBN_coll_grouping_position
+        self.separator = context.scene.zgswtor_ACGBN_coll_grouping_separator
+        self.disable_collections = context.scene.zgswtor_ACGBN_disable_collections
+        self.sort_collections = context.scene.zgswtor_ACGBN_sort_collections
 
         if self.action == "GROUP_ALL":
             group_collections(bpy.data.collections, self.separator, self.position)
@@ -283,13 +283,13 @@ def flatten_all_collections(cleanup=False):
 def register():
     bpy.utils.register_class(ZGSWTOR_OT_group_collections)
 
-    bpy.types.Scene.GC_coll_grouping_separator = bpy.props.StringProperty(
+    bpy.types.Scene.zgswtor_ACGBN_coll_grouping_separator = bpy.props.StringProperty(
         name="Separator",
         description="Separator character in the Collections' names (típically an underline)",
         default="_",
     )
 
-    bpy.types.Scene.GC_coll_grouping_position = bpy.props.IntProperty(
+    bpy.types.Scene.zgswtor_ACGBN_coll_grouping_position = bpy.props.IntProperty(
         name="Position",
         description="Position of the separator that will determine the common part\nof the Collections' names to group them by",
         min = 1,
@@ -300,13 +300,13 @@ def register():
         default = 1,
     )
     
-    bpy.types.Scene.GC_disable_collections = bpy.props.BoolProperty(
+    bpy.types.Scene.zgswtor_ACGBN_disable_collections = bpy.props.BoolProperty(
         name="Disable Collections in ViewLayer",
         description="All Collections are set as disabled in the View Layer to keep\nBlender responsive in the case of large areas and whole worlds\n(normally, grouping Collections into new ones makes them visible)",
         default=True,
     )
 
-    bpy.types.Scene.GC_sort_collections = bpy.props.BoolProperty(
+    bpy.types.Scene.zgswtor_ACGBN_sort_collections = bpy.props.BoolProperty(
         name="Sort Collections in Outliner",
         description="Orders the Collections in the Outliner alphabetically. If disabled,\nGrouped Collections are added to the bottom of the Outliner\nby processing order",
         default=True,
@@ -317,8 +317,10 @@ def register():
 def unregister():
     bpy.utils.unregister_class(ZGSWTOR_OT_group_collections)
 
-    del bpy.types.Scene.GC_coll_grouping_position
-    del bpy.types.Scene.GC_coll_grouping_separator
+    del bpy.types.Scene.zgswtor_ACGBN_coll_grouping_separator
+    del bpy.types.Scene.zgswtor_ACGBN_coll_grouping_position
+    del bpy.types.Scene.zgswtor_ACGBN_disable_collections
+    del bpy.types.Scene.zgswtor_ACGBN_sort_collections
 
 
 if __name__ == "__main__":

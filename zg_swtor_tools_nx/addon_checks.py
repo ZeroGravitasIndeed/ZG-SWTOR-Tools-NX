@@ -110,7 +110,7 @@ def requirements_checks():
     default_custom_shaders_blend_filepath = os.path.join(ADDON_ROOT, "rsrc", "Custom SWTOR Shaders.blend")
 
     # Current one
-    custom_shaders_blend_filepath = getattr(bpy.context.preferences.addons["zg_swtor_tools"].preferences, "swtor_custom_shaders_blendfile_path", "")
+    custom_shaders_blend_filepath = getattr(bpy.context.preferences.addons["zg_swtor_tools_nx"].preferences, "swtor_custom_shaders_blendfile_path", "")
         
     blend_file_badly_written = (".blend" not in custom_shaders_blend_filepath or os.sep not in custom_shaders_blend_filepath)
     blend_file_exists = Path(custom_shaders_blend_filepath).is_file()

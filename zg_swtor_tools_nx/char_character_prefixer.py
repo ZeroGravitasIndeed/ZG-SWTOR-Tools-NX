@@ -81,9 +81,9 @@ class ZGSWTOR_OT_prefixer(bpy.types.Operator):
 
     def execute(self, context):
         
-        self.prefix = context.scene.zg_prefix  # Retrieve the prefix from the scene property
+        self.prefix = context.scene.zgswtor_CP_prefix  # Retrieve the prefix from the scene property
         
-        self.prefix_mats_skeletons = context.scene.zg_prefix_mats_skeletons_bool
+        self.prefix_mats_skeletons = context.scene.zgswtor_CP_prefix_mats_skeletons
         
         prefixable_rna_types = [
             "Armature",
@@ -136,12 +136,12 @@ class ZGSWTOR_OT_prefixer(bpy.types.Operator):
 def register():
     bpy.utils.register_class(ZGSWTOR_OT_prefixer)
     
-    bpy.types.Scene.zg_prefix = bpy.props.StringProperty(
+    bpy.types.Scene.zgswtor_CP_prefix = bpy.props.StringProperty(
         name="Prefix text",
         description = "Please include in the prefix any separator between it\nand the original name: spaces, hyphens, etc\n\n• Confirm entered text with TAB, ENTER, RETURN\n   or by clicking outside the text field",
         default=""
         )
-    bpy.types.Scene.zg_prefix_mats_skeletons_bool = bpy.props.BoolProperty(
+    bpy.types.Scene.zgswtor_CP_prefix_mats_skeletons = bpy.props.BoolProperty(
         name="Prefix Materials and Armatures Too",
         description="Prefixes not just the objects (meshes and skeletons)\nbut the Materials and internal skeleton data-blocks linked to them, too",
         default = True
@@ -150,8 +150,8 @@ def register():
 def unregister():
     bpy.utils.unregister_class(ZGSWTOR_OT_prefixer)
     
-    del bpy.types.Scene.zg_prefix
-    del bpy.types.Scene.zg_prefix_mats_skeletons_bool
+    del bpy.types.Scene.zgswtor_CP_prefix
+    del bpy.types.Scene.zgswtor_CP_prefix_mats_skeletons
 
 
 if __name__ == "__main__":

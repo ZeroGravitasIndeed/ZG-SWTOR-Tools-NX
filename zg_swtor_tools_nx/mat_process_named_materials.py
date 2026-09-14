@@ -130,7 +130,7 @@ def process_mats(self, mats_list = [], obj = None, already_processed_mats = [], 
                 continue
             
             # If there is a SWTOR shader already and overwriting is off.
-            if swtor_node_in_mat and not self.use_overwrite_bool:
+            if swtor_node_in_mat and not self.use_overwrite:
                 continue
             
 
@@ -171,7 +171,7 @@ def process_mats(self, mats_list = [], obj = None, already_processed_mats = [], 
 
         # Delete Principled Shader (and everything else) if needed
         if (
-            self.use_overwrite_bool
+            self.use_overwrite
             or (matxml_derived in atroxa_shader_types and not swtor_node_in_mat)
             or (matxml_derived in ["EmissiveOnly", "AnimatedUV"] and "_d DiffuseMap" not in mat_nodes)
             ):
@@ -587,14 +587,14 @@ class ZGSWTOR_OT_process_named_mats(bpy.types.Operator):
         options={'HIDDEN'}
         )
     
-    use_overwrite_bool: bpy.props.BoolProperty(
+    use_overwrite: bpy.props.BoolProperty(
         name="Overwrite materials",
         description="Reprocesses already processed materials. This allows for updating them if better versions\nof our SWTOR Materials are implemented in new Add-on releases.",
         default = False,
         options={'HIDDEN'}
         )
 
-    use_collect_colliders_bool: bpy.props.BoolProperty(
+    use_collect_colliders: bpy.props.BoolProperty(
         name="Collect Collider objects",
         description='Collects all objects with an "util_collision_hidden" material in a Collection named "Collider Objects"',
         default = True,
@@ -634,7 +634,7 @@ class ZGSWTOR_OT_process_named_mats(bpy.types.Operator):
         already_processed_mats = []
         collider_objects = []
 
-        self.use_deprecated_materials = bpy.context.scene.use_deprecated_materials
+        self.use_deprecated_materials = bpy.context.Scene.zgswtor_PNM_use_deprecated_materials
 
         # Use from Shader Editor
         if self.convert_this_material != "" and self.convert_this_material in bpy.data.materials:
@@ -646,8 +646,8 @@ class ZGSWTOR_OT_process_named_mats(bpy.types.Operator):
             
             # When in the Shadwr Editor we don't do collider collecting
             # and we always overwrite SWTOR materials.
-            bpy.context.scene.use_collect_colliders_bool = False
-            self.use_overwrite_bool = True
+            bpy.context.Scene.zgswtor_PNM_use_collect_colliders = False
+            self.use_overwrite = True
 
 
             print()
@@ -660,8 +660,8 @@ class ZGSWTOR_OT_process_named_mats(bpy.types.Operator):
         # Use from 3D View
         else:
                         
-            self.use_collect_colliders_bool = bpy.context.scene.use_collect_colliders_bool
-            self.use_overwrite_bool = bpy.context.scene.use_overwrite_bool
+            self.use_collect_colliders = bpy.context.Scene.zgswtor_PNM_use_collect_colliders
+            self.use_overwrite = bpy.context.Scene.zgswtor_PNM_use_overwrite
             
             if self.use_selection_only:
                 selected_objects = bpy.context.selected_objects
@@ -698,13 +698,13 @@ class ZGSWTOR_OT_process_named_mats(bpy.types.Operator):
                         print("          OBJECT HAS NO MATERIALS")
                         
                     # Collider object detection and collecting.
-                    if self.use_collect_colliders_bool and is_collider is True and obj.name != "Matalogue Dummy Object":
+                    if self.use_collect_colliders and is_collider is True and obj.name != "Matalogue Dummy Object":
                         collider_objects.append(obj)
 
 
 
             # Adding collider objects to a Collection
-            if self.use_collect_colliders_bool and collider_objects:
+            if self.use_collect_colliders and collider_objects:
                 if "Collider Objects" not in bpy.context.scene.collection.children:
                     colliders_collection = bpy.data.collections.new("Collider Objects")
                     bpy.context.scene.collection.children.link(colliders_collection)
@@ -729,31 +729,31 @@ class ZGSWTOR_OT_process_named_mats(bpy.types.Operator):
 
 def register():
 
-    bpy.types.Scene.use_deprecated_materials = bpy.props.BoolProperty(
+    bpy.types.Scene.zgswtor_PNM_use_deprecated_materials = bpy.props.BoolProperty(
         description='Applies old style "smart" but inflexible SWTOR materials.\nThese still work but are being phased out',
         default = False,
     )
-
-    bpy.types.Scene.use_selection_only = bpy.props.BoolProperty(
+    # Is this one in use, really?
+    bpy.types.Scene.zgswtor_PNM_use_selection_only = bpy.props.BoolProperty(
         description='Applies the material processing to the current selection of objects only',
         default = False
     )
     
-    bpy.types.Scene.use_overwrite_bool = bpy.props.BoolProperty(
+    bpy.types.Scene.zgswtor_PNM_use_overwrite = bpy.props.BoolProperty(
         description="Reprocesses already processed materials. This allows for updating them if better versions\nof our SWTOR Materials are implemented in new Add-on releases.",
         default=False
     )
-    bpy.types.Scene.use_collect_colliders_bool = bpy.props.BoolProperty(
+    bpy.types.Scene.zgswtor_PNM_use_collect_colliders = bpy.props.BoolProperty(
         description='Creates or uses a "Collider Objects" Collection and adds to it\nany object with an "util_collision_hidden" type of material\nto facilitate its management and / or deletion',
         default=True
     )
     bpy.utils.register_class(ZGSWTOR_OT_process_named_mats)
 
 def unregister():
-    del bpy.types.Scene.use_deprecated_materials
-    del bpy.types.Scene.use_selection_only
-    del bpy.types.Scene.use_overwrite_bool
-    del bpy.types.Scene.use_collect_colliders_bool
+    del bpy.types.Scene.zgswtor_PNM_use_deprecated_materials
+    del bpy.types.Scene.zgswtor_PNM_use_selection_only
+    del bpy.types.Scene.zgswtor_PNM_use_overwrite
+    del bpy.types.Scene.zgswtor_PNM_use_collect_colliders
     
     bpy.utils.unregister_class(ZGSWTOR_OT_process_named_mats)
 

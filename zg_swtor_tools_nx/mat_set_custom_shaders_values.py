@@ -152,16 +152,16 @@ class ZGSWTOR_OT_set_custom_shaders_values(bpy.types.Operator):
         context.window.cursor_set("WAIT")  # Show wait cursor icon
 
         # Nodegroup-level Properties
-        self.specular = context.scene.scsv_specular
-        self.specular_checkbox = context.scene.scsv_specular_checkbox
-        self.roughness = context.scene.scsv_roughness
-        self.roughness_checkbox = context.scene.scsv_roughness_checkbox
-        self.emission = context.scene.scsv_emission
-        self.emission_checkbox = context.scene.scsv_emission_checkbox
-        self.saturation = context.scene.scsv_saturation_checkbox
-        self.saturation_checkbox = context.scene.scsv_saturation_checkbox
-        self.normal = context.scene.scsv_normal
-        self.normal_checkbox = context.scene.scsv_normal_checkbox
+        self.specular = context.scene.zgswtor_SCSV_specular
+        self.specular_checkbox = context.scene.zgswtor_SCSV_specular_checkbox
+        self.roughness = context.scene.zgswtor_SCSV_roughness
+        self.roughness_checkbox = context.scene.zgswtor_SCSV_roughness_checkbox
+        self.emission = context.scene.zgswtor_SCSV_emission
+        self.emission_checkbox = context.scene.zgswtor_SCSV_emission_checkbox
+        self.saturation = context.scene.zgswtor_SCSV_saturation_checkbox
+        self.saturation_checkbox = context.scene.zgswtor_SCSV_saturation_checkbox
+        self.normal = context.scene.zgswtor_SCSV_normal
+        self.normal_checkbox = context.scene.zgswtor_SCSV_normal_checkbox
 
         there_are_nodegroup_level_changes = (
             self.specular_checkbox or
@@ -173,10 +173,10 @@ class ZGSWTOR_OT_set_custom_shaders_values(bpy.types.Operator):
                             
 
         # Material-level Properties
-        self.blend_mode = context.scene.scsv_blend_mode
-        self.blend_mode_checkbox = context.scene.scsv_blend_mode_checkbox
-        self.show_backface = context.scene.scsv_show_backface
-        self.show_backface_checkbox = context.scene.scsv_show_backface_checkbox
+        self.blend_mode = context.scene.zgswtor_SCSV_blend_mode
+        self.blend_mode_checkbox = context.scene.zgswtor_SCSV_blend_mode_checkbox
+        self.show_backface = context.scene.zgswtor_SCSV_show_backface
+        self.show_backface_checkbox = context.scene.zgswtor_SCSV_show_backface_checkbox
         
         there_are_material_level_changes = (
             self.blend_mode_checkbox or
@@ -288,7 +288,7 @@ def register():
     
     bpy.utils.register_class(ZGSWTOR_OT_set_custom_shaders_values)
 
-    bpy.types.Scene.scsv_specular= bpy.props.FloatProperty(
+    bpy.types.Scene.zgswtor_SCSV_specular= bpy.props.FloatProperty(
         name="Specular Strength",
         description="Custom SWTOR Shaders' Specular Strength",
         default = 1.0,
@@ -296,7 +296,7 @@ def register():
         max=20,
         options={'HIDDEN'},
     )
-    bpy.types.Scene.scsv_specular_checkbox= bpy.props.BoolProperty(
+    bpy.types.Scene.zgswtor_SCSV_specular_checkbox= bpy.props.BoolProperty(
         name="Specular Strength Checkbox",
         description="Allow Specular Strength to be altered",
         default = False,
@@ -304,7 +304,7 @@ def register():
     )
     
     
-    bpy.types.Scene.scsv_roughness= bpy.props.FloatProperty(
+    bpy.types.Scene.zgswtor_SCSV_roughness= bpy.props.FloatProperty(
         name="Roughness Factor",
         description="Custom SWTOR Shaders' Roughness Factor",
         default = 1.0,
@@ -312,7 +312,7 @@ def register():
         max=1,
         options={'HIDDEN'},
     )
-    bpy.types.Scene.scsv_roughness_checkbox= bpy.props.BoolProperty(
+    bpy.types.Scene.zgswtor_SCSV_roughness_checkbox= bpy.props.BoolProperty(
         name="Roughness Factor Checkbox",
         description="Allow Roughness Factor to be altered",
         default = False,
@@ -320,7 +320,7 @@ def register():
     )
     
     
-    bpy.types.Scene.scsv_emission= bpy.props.FloatProperty(
+    bpy.types.Scene.zgswtor_SCSV_emission= bpy.props.FloatProperty(
         name="Emission Strength",
         description="Custom SWTOR Shaders' Emission Strength",
         default = 1.0,
@@ -328,7 +328,7 @@ def register():
         max=50,
         options={'HIDDEN'},
     )
-    bpy.types.Scene.scsv_emission_checkbox= bpy.props.BoolProperty(
+    bpy.types.Scene.zgswtor_SCSV_emission_checkbox= bpy.props.BoolProperty(
         name="Emission Strength Checkbox",
         description="Allow Emission Strength to be altered",
         default = False,
@@ -336,7 +336,7 @@ def register():
     )
 
 
-    bpy.types.Scene.scsv_saturation= bpy.props.FloatProperty(
+    bpy.types.Scene.zgswtor_SCSV_saturation= bpy.props.FloatProperty(
         name="Emissiveness Saturation",
         description="Custom SWTOR Shaders' Emissiveness Saturation",
         default = 1.0,
@@ -344,7 +344,7 @@ def register():
         max=20,
         options={'HIDDEN'},
     )
-    bpy.types.Scene.scsv_saturation_checkbox= bpy.props.BoolProperty(
+    bpy.types.Scene.zgswtor_SCSV_saturation_checkbox= bpy.props.BoolProperty(
         name="Emissiveness Saturation Checkbox",
         description="Allow Emissiveness Saturation to be altered",
         default = False,
@@ -352,7 +352,7 @@ def register():
     )
 
 
-    bpy.types.Scene.scsv_normal= bpy.props.FloatProperty(
+    bpy.types.Scene.zgswtor_SCSV_normal= bpy.props.FloatProperty(
         name="Normals' Strength",
         description="Custom SWTOR Shaders' Normal Strength",
         default = 1.0,
@@ -360,7 +360,7 @@ def register():
         max=20,
         options={'HIDDEN'},
     )
-    bpy.types.Scene.scsv_normal_checkbox= bpy.props.BoolProperty(
+    bpy.types.Scene.zgswtor_SCSV_normal_checkbox= bpy.props.BoolProperty(
         name="Normal Strength Checkbox",
         description="Allow Normal Strength to be altered",
         default = False,
@@ -368,7 +368,7 @@ def register():
     )
 
 
-    bpy.types.Scene.scsv_blend_mode= bpy.props.EnumProperty(
+    bpy.types.Scene.zgswtor_SCSV_blend_mode= bpy.props.EnumProperty(
         name="Blend Mode",
         description="Materials' Blend Mode",
         items=[
@@ -380,14 +380,14 @@ def register():
         default = "BLEND",
         options={'HIDDEN'},
     )
-    bpy.types.Scene.scsv_blend_mode_checkbox= bpy.props.BoolProperty(
+    bpy.types.Scene.zgswtor_SCSV_blend_mode_checkbox= bpy.props.BoolProperty(
         name="Blend Mode Checkbox",
         description="Allow Blend Mode to be altered",
         default = False,
         options={'HIDDEN'},
     )
 
-    bpy.types.Scene.scsv_show_backface= bpy.props.EnumProperty(
+    bpy.types.Scene.zgswtor_SCSV_show_backface= bpy.props.EnumProperty(
         name="Show Backface",
         description="Materials' Show Backface property",
         items=[
@@ -397,7 +397,7 @@ def register():
         default = "NO",
         options={'HIDDEN'},
     )
-    bpy.types.Scene.scsv_show_backface_checkbox= bpy.props.BoolProperty(
+    bpy.types.Scene.zgswtor_SCSV_show_backface_checkbox= bpy.props.BoolProperty(
         name="Show Backface Checkbox",
         description="Allow Show Backface setting to be altered",
         default = False,
@@ -412,20 +412,20 @@ def register():
 def unregister():
     bpy.utils.unregister_class(ZGSWTOR_OT_set_custom_shaders_values)
     
-    del bpy.types.Scene.scsv_specular
-    del bpy.types.Scene.scsv_specular_checkbox
-    del bpy.types.Scene.scsv_roughness
-    del bpy.types.Scene.scsv_roughness_checkbox
-    del bpy.types.Scene.scsv_emission
-    del bpy.types.Scene.scsv_emission_checkbox
-    del bpy.types.Scene.scsv_saturation
-    del bpy.types.Scene.scsv_saturation_checkbox
-    del bpy.types.Scene.scsv_normal
-    del bpy.types.Scene.scsv_normal_checkbox
-    del bpy.types.Scene.scsv_blend_mode
-    del bpy.types.Scene.scsv_blend_mode_checkbox
-    del bpy.types.Scene.scsv_show_backface
-    del bpy.types.Scene.scsv_show_backface_checkbox
+    del bpy.types.Scene.zgswtor_SCSV_specular
+    del bpy.types.Scene.zgswtor_SCSV_specular_checkbox
+    del bpy.types.Scene.zgswtor_SCSV_roughness
+    del bpy.types.Scene.zgswtor_SCSV_roughness_checkbox
+    del bpy.types.Scene.zgswtor_SCSV_emission
+    del bpy.types.Scene.zgswtor_SCSV_emission_checkbox
+    del bpy.types.Scene.zgswtor_SCSV_saturation
+    del bpy.types.Scene.zgswtor_SCSV_saturation_checkbox
+    del bpy.types.Scene.zgswtor_SCSV_normal
+    del bpy.types.Scene.zgswtor_SCSV_normal_checkbox
+    del bpy.types.Scene.zgswtor_SCSV_blend_mode
+    del bpy.types.Scene.zgswtor_SCSV_blend_mode_checkbox
+    del bpy.types.Scene.zgswtor_SCSV_show_backface
+    del bpy.types.Scene.zgswtor_SCSV_show_backface_checkbox
 
 
 if __name__ == "__main__":

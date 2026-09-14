@@ -44,7 +44,7 @@ class ZGSWTOR_OT_customize_swtor_shaders(bpy.types.Operator):
 
     # Properties
 
-    preserve_atroxa_bool: bpy.props.BoolProperty(
+    zgswtor_CSS_preserve_atroxa_shaders: bpy.props.BoolProperty(
         name="Preserve original shaders",
         description='Keep the original SWTOR shaders, disconnected from the Output Node,\nso that comparing or reverting to them is possible',
         default = True,
@@ -137,12 +137,12 @@ class ZGSWTOR_OT_customize_swtor_shaders(bpy.types.Operator):
             selected_objs = bpy.data.objects
 
         # Call external shaders linker/appender operator
-        shaders_lib_filepath = bpy.context.preferences.addons["zg_swtor_tools"].preferences.swtor_custom_shaders_blendfile_path
+        shaders_lib_filepath = bpy.context.preferences.addons["zg_swtor_tools_nx"].preferences.swtor_custom_shaders_blendfile_path
         
         open_blend_filepath = bpy.data.filepath
 
         if open_blend_filepath != shaders_lib_filepath:
-            bpy.ops.zgswtor.add_custom_external_swtor_shaders(link = context.scene.use_linking_bool)
+            bpy.ops.zgswtor.add_custom_external_swtor_shaders(link = context.scene.use_linking)
 
         # ----------------------------------------------------
         
@@ -275,7 +275,7 @@ class ZGSWTOR_OT_customize_swtor_shaders(bpy.types.Operator):
                                         mat_links.new(normals_convert_node.outputs[0], dirMap_node.inputs[0])
                                         
                                         
-                        if context.scene.preserve_atroxa_bool:
+                        if context.scene.zgswtor_CSS_preserve_atroxa_shaders:
                             # Reposition smart shader out of the way
                             atroxa_node.location = 600, 0
                         else:
@@ -292,7 +292,7 @@ class ZGSWTOR_OT_customize_swtor_shaders(bpy.types.Operator):
 
 def register():
     
-    bpy.types.Scene.preserve_atroxa_bool = bpy.props.BoolProperty(
+    bpy.types.Scene.zgswtor_CSS_preserve_atroxa_shaders = bpy.props.BoolProperty(
         name="Preserve original shaders",
         description='Keep the original SWTOR shaders, disconnected from the Output Node,\nso that comparing or reverting to them is possible',
         default = True,
@@ -304,7 +304,7 @@ def register():
     bpy.utils.register_class(ZGSWTOR_OT_customize_swtor_shaders)
 
 def unregister():
-    del bpy.types.Scene.preserve_atroxa_bool
+    del bpy.types.Scene.zgswtor_CSS_preserve_atroxa_shaders
     # del bpy.types.Scene.css_use_selection_only
 
     

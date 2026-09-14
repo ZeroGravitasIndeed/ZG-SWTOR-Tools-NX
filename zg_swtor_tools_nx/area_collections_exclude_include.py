@@ -114,7 +114,7 @@ class ZGSWTOR_OT_exclude_include_collections(bpy.types.Operator):
         
         bpy.context.window.cursor_set("WAIT")
 
-        self.recursive = bpy.context.scene.EAC_recursive
+        self.recursive = bpy.context.scene.zgswtor_CEI_recursive
         
         layer_collections_dict = create_layer_collections_dictionary()
         
@@ -168,7 +168,7 @@ class ZGSWTOR_OT_exclude_include_collections(bpy.types.Operator):
 def register():
     bpy.utils.register_class(ZGSWTOR_OT_exclude_include_collections)
     
-    bpy.types.Scene.EAC_recursive = bpy.props.BoolProperty(
+    bpy.types.Scene.zgswtor_CEI_recursive = bpy.props.BoolProperty(
         name="Affect Selected Collections' Hierarchies",
         description="Process Collections' hierarchies of children Collections, if any",
         default=True
@@ -178,7 +178,7 @@ def register():
 def unregister():
     bpy.utils.unregister_class(ZGSWTOR_OT_exclude_include_collections)
 
-    del bpy.types.Scene.EAC_recursive
+    del bpy.types.Scene.zgswtor_CEI_recursive
 
 
 if __name__ == "__main__":

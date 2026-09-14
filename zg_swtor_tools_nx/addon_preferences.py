@@ -18,48 +18,11 @@ Y_SCALING_INFO = 0.65
 Y_SCALING_SPACER = 0.3
 
 
-# Utility function
-def blender_prefs_with_custom_size(pref_window_width,  pref_window_height):
-    # based on code by "Rombout Versluijs, Pan Beep (Beep) https://github.com/schroef.
-    # See:
-    # https://github.com/schroef/Custom-Preferences-Size
-    # and:
-    # https://projects.blender.org/blender/blender/issues/71935#818493
-    
-    # This sets the prefs window's dimensions and opens it,
-    # but once open it sets its values back to their original settings
-    # for future manual openings, as a precaution.
-    
-    # Modify scene settings
-    render = bpy.context.scene.render
-    prefs = bpy.context.preferences
-    view = prefs.view
-    orgResX = render.resolution_x
-    orgResY = render.resolution_y
-    render.resolution_x = int(pref_window_width)
-    render.resolution_y = int(pref_window_height)
-    orgDispMode = view.render_display_type
-    view.render_display_type = "WINDOW"
-
-    # Call image editor window
-    bpy.ops.render.view_show("INVOKE_DEFAULT")
-
-    # Change area type
-    area = bpy.context.window_manager.windows[-1].screen.areas[0]
-    area.type = "PREFERENCES"
-
-    # Restore old values
-    view.render_display_type = orgDispMode
-    render.resolution_x = orgResX
-    render.resolution_y = orgResY
-
-
-
 
 # PREFERENCES ----------------------------------------
 
 class addonPreferences(bpy.types.AddonPreferences):
-    bl_idname = "zg_swtor_tools"
+    bl_idname = "zg_swtor_tools_nx"
 
     # Preferences properties --------------------
     
@@ -133,7 +96,6 @@ class addonPreferences(bpy.types.AddonPreferences):
 
 
 # reset_custom_shaders_prefs_to_internal Operator ----
-
 class ZGSWTOR_OT_reset_custom_shaders_prefs_to_internal(bpy.types.Operator):
     bl_idname = "zgswtor.reset_custom_shaders_prefs_to_internal"
     bl_label = "ZG Custom Shaders Reset To Internal"
@@ -154,7 +116,7 @@ class ZGSWTOR_OT_reset_custom_shaders_prefs_to_internal(bpy.types.Operator):
         # Default Custom shaders .blend file's filepath
         default_custom_shaders_blend_filepath = os.path.join(os.path.dirname(__file__), "rsrc" + os.sep + "Custom SWTOR Shaders.blend")
 
-        context.preferences.addons["zg_swtor_tools"].preferences["swtor_custom_shaders_blendfile_path"] = default_custom_shaders_blend_filepath
+        context.preferences.addons["zg_swtor_tools_nx"].preferences["swtor_custom_shaders_blendfile_path"] = default_custom_shaders_blend_filepath
         
         return {"FINISHED"}
     
@@ -162,6 +124,41 @@ class ZGSWTOR_OT_reset_custom_shaders_prefs_to_internal(bpy.types.Operator):
 
 
 
+
+# Open new Preferences window aux function
+def blender_prefs_with_custom_size(pref_window_width,  pref_window_height):
+    # based on code by "Rombout Versluijs, Pan Beep (Beep) https://github.com/schroef.
+    # See:
+    # https://github.com/schroef/Custom-Preferences-Size
+    # and:
+    # https://projects.blender.org/blender/blender/issues/71935#818493
+    
+    # This sets the prefs window's dimensions and opens it,
+    # but once open it sets its values back to their original settings
+    # for future manual openings, as a precaution.
+    
+    # Modify scene settings
+    render = bpy.context.scene.render
+    prefs = bpy.context.preferences
+    view = prefs.view
+    orgResX = render.resolution_x
+    orgResY = render.resolution_y
+    render.resolution_x = int(pref_window_width)
+    render.resolution_y = int(pref_window_height)
+    orgDispMode = view.render_display_type
+    view.render_display_type = "WINDOW"
+
+    # Call image editor window
+    bpy.ops.render.view_show("INVOKE_DEFAULT")
+
+    # Change area type
+    area = bpy.context.window_manager.windows[-1].screen.areas[0]
+    area.type = "PREFERENCES"
+
+    # Restore old values
+    view.render_display_type = orgDispMode
+    render.resolution_x = orgResX
+    render.resolution_y = orgResY
 
 # Operator to open the ZG SWTOR Tools' preferences window,
 # called by addon_ui's status panel.
@@ -174,7 +171,7 @@ class ZGSWTOR_OT_open_zg_preferences(Operator):
         # bpy.ops.screen.userpref_show(section="ADDONS")
         
         blender_prefs_with_custom_size(640, 512)
-        bpy.ops.preferences.addon_show(module="zg_swtor_tools")
+        bpy.ops.preferences.addon_show(module="zg_swtor_tools_nx")
         return {'FINISHED'}
 
 

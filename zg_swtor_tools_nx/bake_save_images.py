@@ -15,7 +15,7 @@ class ZGSWTOR_PT_SaveImagesBySubstring(Operator, ImportHelper):
     @classmethod
     def poll(cls,context):
         for img in bpy.data.images:
-            if context.scene.SBI_common_text_in_names in img.name:
+            if context.scene.zgswtor_SBI_common_text_in_names in img.name:
                 return True
         return False
 
@@ -47,8 +47,8 @@ class ZGSWTOR_PT_SaveImagesBySubstring(Operator, ImportHelper):
 
 
     def execute(self, context):
-        self.common_text_in_names = context.scene.SBI_common_text_in_names
-        self.case_sensitive = context.scene.SBI_case_sensitive
+        self.common_text_in_names = context.scene.zgswtor_SBI_common_text_in_names
+        self.case_sensitive = context.scene.zgswtor_SBI_case_sensitive
 
         # Iterate through all images in the current blend file
         for img in bpy.data.images:
@@ -83,12 +83,12 @@ class ZGSWTOR_PT_SaveImagesBySubstring(Operator, ImportHelper):
 def register():
     bpy.utils.register_class(ZGSWTOR_PT_SaveImagesBySubstring)
     
-    bpy.types.Scene.SBI_common_text_in_names = bpy.props.StringProperty(
+    bpy.types.Scene.zgswtor_SBI_common_text_in_names = bpy.props.StringProperty(
         name="Common Text In Names",
         description="Piece of text common to all the images' names",
         default="BAKED-",
     )
-    bpy.types.Scene.SBI_case_sensitive = bpy.props.BoolProperty(
+    bpy.types.Scene.zgswtor_SBI_case_sensitive = bpy.props.BoolProperty(
         name="Case-Sensitive",
         description="The common piece of text has to be an exact upper/lowercase match.",
         default=True,
@@ -98,8 +98,8 @@ def register():
 def unregister():
     bpy.utils.unregister_class(ZGSWTOR_PT_SaveImagesBySubstring)
     
-    del bpy.types.Scene.SBI_common_text_in_names
-    del bpy.types.Scene.SBI_case_sensitive
+    del bpy.types.Scene.zgswtor_SBI_common_text_in_names
+    del bpy.types.Scene.zgswtor_SBI_case_sensitive
 
 if __name__ == "__main__":
     register()

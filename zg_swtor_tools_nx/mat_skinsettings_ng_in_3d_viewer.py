@@ -34,10 +34,10 @@ class ZGSWTOR_OT_skinsettings_ng_in_3d_viewer(bpy.types.Operator):
             self.report({"WARNING"}, "No Skin Settings Nodegroup template present in this project")
             return {"CANCELLED"}
 
-        if context.scene.apply_skinsettings_name == "" or context.scene.apply_skinsettings_name.strip() == "":
+        if context.scene.zgswtor_ASS_apply_skinsettings_name == "" or context.scene.zgswtor_ASS_apply_skinsettings_name.strip() == "":
             bpy.context.window.cursor_set("DEFAULT")
             self.report({"WARNING"}, "Please enter a character's name for the Skin Settings Nodegroup")
-            context.scene.apply_skinsettings_name = ""
+            context.scene.zgswtor_ASS_apply_skinsettings_name = ""
             return {"CANCELLED"}
 
 
@@ -70,13 +70,13 @@ class ZGSWTOR_OT_skinsettings_ng_in_3d_viewer(bpy.types.Operator):
 
         # Prepare character-specific local skin settings Nodegroup -----------------------------
         
-        character_name = context.scene.apply_skinsettings_name
+        character_name = context.scene.zgswtor_ASS_apply_skinsettings_name
         zg_skinsettings_name = character_name + "'s Skin Settings"
 
         if zg_skinsettings_name in bpy.data.node_groups:
             bpy.context.window.cursor_set("DEFAULT")
             self.report({"WARNING"}, 'A "' + zg_skinsettings_name + '" Nodegroup already exists.')
-            context.scene.apply_skinsettings_name = ""
+            context.scene.zgswtor_ASS_apply_skinsettings_name = ""
             return {"CANCELLED"}
         
         # Make a local copy of template "SW Template - Character's Skin Settings" Nodegroup
@@ -113,7 +113,7 @@ class ZGSWTOR_OT_skinsettings_ng_in_3d_viewer(bpy.types.Operator):
 
 
             # Special rewiring for Twi'lek characters if checkboxed
-            if context.scene.apply_skinsettings_twilek == True:
+            if context.scene.zgswtor_ASS_apply_skinsettings_twilek == True:
                 mat_links.new(zg_skinsettings_node.outputs["Twi'lek GlossMap Color"],zg_skinb_node.inputs["_s GlossMap Color"])
                 mat_links.new(zg_skinsettings_node.outputs["Twi'lek GlossMap Alpha"],zg_skinb_node.inputs["_s GlossMap Alpha"])
 
@@ -131,7 +131,7 @@ class ZGSWTOR_OT_skinsettings_ng_in_3d_viewer(bpy.types.Operator):
                         zg_skinsettings_nodegroup_output.inputs[output.name].default_value = zg_skinb_node.inputs[output.name].default_value
 
 
-        context.scene.apply_skinsettings_name = ""
+        context.scene.zgswtor_ASS_apply_skinsettings_name = ""
         
         bpy.context.window.cursor_set("DEFAULT")
         return {"FINISHED"}
@@ -146,12 +146,12 @@ class ZGSWTOR_OT_skinsettings_ng_in_3d_viewer(bpy.types.Operator):
 # Registrations
 
 def register():
-    bpy.types.Scene.apply_skinsettings_twilek = bpy.props.BoolProperty(
+    bpy.types.Scene.zgswtor_ASS_apply_skinsettings_twilek = bpy.props.BoolProperty(
         name="Override Twi'lek GlossMaps",
         description="If ticked, disconnects the GlossMaps and connects\nsimpler common values in their place.\n\n(For some reason, Twi'lek heads' GlossMaps don't match\nhumanoid bodies' ones, producing a noticeable seam effect)",
         default = False,
     )
-    bpy.types.Scene.apply_skinsettings_name = bpy.props.StringProperty(
+    bpy.types.Scene.zgswtor_ASS_apply_skinsettings_name = bpy.props.StringProperty(
         name="Skin Settings Nodegroup's prefix name",
         description="Name of the character to apply to\nthe Nodegroup's name (\"<name>'s Skin Settings\").\n\n• It is case-sensitive.\n• Adds a \"Skin Settings\" to the entered name. Any desired separator\n   characters (spaces, hyphens, etc.) have to be entered in the name.\n• The Group's name can be changed manually afterwards.\n• This field reverts to empty after application.",
         subtype = "NONE",
@@ -160,8 +160,8 @@ def register():
     bpy.utils.register_class(ZGSWTOR_OT_skinsettings_ng_in_3d_viewer)
 
 def unregister():
-    del bpy.types.Scene.apply_skinsettings_twilek
-    del bpy.types.Scene.apply_skinsettings_name
+    del bpy.types.Scene.zgswtor_ASS_apply_skinsettings_twilek
+    del bpy.types.Scene.zgswtor_ASS_apply_skinsettings_name
     bpy.utils.unregister_class(ZGSWTOR_OT_skinsettings_ng_in_3d_viewer)
 
 

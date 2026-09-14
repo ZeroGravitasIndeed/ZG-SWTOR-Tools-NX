@@ -131,10 +131,10 @@ class ZGSWTOR_OT_set_modifiers(bpy.types.Operator):
 
     @staticmethod
     def add_shrinkwrap(obj, gr2_scale):
-        if not bpy.context.scene.ZGshrinkwrap_target:
+        if not bpy.context.scene.zgswtor_SM_shrinkwrap_target:
             return
         
-        if  bpy.context.scene.ZGshrinkwrap_target == obj:
+        if  bpy.context.scene.zgswtor_SM_shrinkwrap_target == obj:
             return
         
         bpy.context.window.cursor_set("WAIT")
@@ -149,7 +149,7 @@ class ZGSWTOR_OT_set_modifiers(bpy.types.Operator):
             mod.wrap_method = "TARGET_PROJECT"
             mod.wrap_mode = "OUTSIDE"
             mod.offset = 0.0004 * gr2_scale
-            mod.target = bpy.context.scene.ZGshrinkwrap_target
+            mod.target = bpy.context.scene.zgswtor_SM_shrinkwrap_target
 
     @staticmethod
     def remove_them(obj):
@@ -285,7 +285,7 @@ class ZGSWTOR_OT_set_modifiers(bpy.types.Operator):
         if selected_objects:
             
             # Checking if we must handle SWTOR objects' custom properties about their meshes' scales
-            use_gr2_scale_custom_prop = context.preferences.addons["zg_swtor_tools"].preferences.use_gr2_scale_custom_prop
+            use_gr2_scale_custom_prop = context.preferences.addons["zg_swtor_tools_nx"].preferences.use_gr2_scale_custom_prop
 
             # Checking if we are dealing with a .gr2 Add-on with scaling parameters
             checks = requirements_checks()
@@ -323,12 +323,12 @@ class ZGSWTOR_OT_set_modifiers(bpy.types.Operator):
                 elif self.action == "add_smooth_corrective":
                     self.add_smooth_corrective(obj)
                 elif self.action == "add_shrinkwrap":
-                    if bpy.context.scene.ZGshrinkwrap_target == obj:
+                    if bpy.context.scene.zgswtor_SM_shrinkwrap_target == obj:
                         self.report({"WARNING"}, "Object can't shrinkwrap itself. Choose a different target.")
                         bpy.context.window.cursor_set("DEFAULT")
                         return {"FINISHED"}
                     else:
-                        if bpy.context.scene.ZGshrinkwrap_target == None:
+                        if bpy.context.scene.zgswtor_SM_shrinkwrap_target == None:
                             self.report({"WARNING"}, "Please choose a Shrinkwrap target.")
                             bpy.context.window.cursor_set("DEFAULT")
                             return {"CANCELLED"}
@@ -361,14 +361,14 @@ class ZGSWTOR_OT_set_modifiers(bpy.types.Operator):
 # Registrations
 
 def register():
-    bpy.types.Scene.ZGshrinkwrap_target = bpy.props.PointerProperty(type=bpy.types.Object)
+    bpy.types.Scene.zgswtor_SM_shrinkwrap_target = bpy.props.PointerProperty(type=bpy.types.Object)
     
     bpy.utils.register_class(ZGSWTOR_OT_set_modifiers)
 
 def unregister():
     bpy.utils.unregister_class(ZGSWTOR_OT_set_modifiers)
     
-    del bpy.types.Scene.ZGshrinkwrap_target
+    del bpy.types.Scene.zgswtor_SM_shrinkwrap_target
 
 if __name__ == "__main__":
     register()

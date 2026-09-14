@@ -72,19 +72,19 @@ class ZGSWTOR_OT_skinsettings_ng_in_shader_editor(bpy.types.Operator):
 
         if self.action == "ADD_NEW_SKINSETTINGS":
 
-            if context.scene.use_skinsettings_name == "" or context.scene.use_skinsettings_name.strip() == "":
+            if context.scene.zgswtor_SSNG_use_skinsettings_name == "" or context.scene.zgswtor_SSNG_use_skinsettings_name.strip() == "":
                 bpy.context.window.cursor_set("DEFAULT")
                 self.report({"WARNING"}, "Please enter a character's name for the Skin Settings Nodegroup")
-                context.scene.use_skinsettings_name = ""
+                context.scene.zgswtor_SSNG_use_skinsettings_name = ""
                 return {"CANCELLED"}
 
-            character_name = context.scene.use_skinsettings_name
+            character_name = context.scene.zgswtor_SSNG_use_skinsettings_name
             zg_skinsettings_name = character_name + "'s Skin Settings"
 
             if zg_skinsettings_name in bpy.data.node_groups:
                 bpy.context.window.cursor_set("DEFAULT")
                 self.report({"WARNING"}, 'A "' + zg_skinsettings_name + '" Nodegroup already exists.')
-                context.scene.use_skinsettings_name = ""
+                context.scene.zgswtor_SSNG_use_skinsettings_name = ""
                 return {"CANCELLED"}
             
             # Make a local copy of template "SW Template - Character's Skin Settings" Nodegroup
@@ -99,7 +99,7 @@ class ZGSWTOR_OT_skinsettings_ng_in_shader_editor(bpy.types.Operator):
             zg_skinsettings_node.width = 250
             zg_skinsettings_node.location = -450, -650
 
-            context.scene.use_skinsettings_name = ""
+            context.scene.zgswtor_SSNG_use_skinsettings_name = ""
 
         elif self.action == "ADD_EXISTING_SKINSETTINGS":
 
@@ -134,7 +134,7 @@ class ZGSWTOR_OT_skinsettings_ng_in_shader_editor(bpy.types.Operator):
             if zg_skinsettings_node == None:
                 bpy.context.window.cursor_set("DEFAULT")
                 self.report({"WARNING"}, "No selected Character Skin Settings Nodegroup")
-                context.scene.use_skinsettings_name = ""
+                context.scene.zgswtor_SSNG_use_skinsettings_name = ""
                 return {"CANCELLED"}
 
             # Copy SkinB input values to Skin Settings Nodegroup's Output Node's values
@@ -152,7 +152,7 @@ class ZGSWTOR_OT_skinsettings_ng_in_shader_editor(bpy.types.Operator):
                 if output.hide_value == False and output.name in zg_skinb_node.inputs:  # If sockets aren't cosmetic then do
                     zg_skinsettings_nodegroup_output.inputs[output.name].default_value = zg_skinb_node.inputs[output.name].default_value
 
-            if context.scene.use_skinsettings_twilek == True:
+            if context.scene.zgswtor_SSNG_use_skinsettings_twilek == True:
                 mat_links.new(zg_skinsettings_node.outputs["Twi'lek GlossMap Color"],zg_skinb_node.inputs["_s GlossMap Color"])
                 mat_links.new(zg_skinsettings_node.outputs["Twi'lek GlossMap Alpha"],zg_skinb_node.inputs["_s GlossMap Alpha"])
                 # mat_links.remove(zg_skinsettings_node.outputs["Twi'lek GlossMap Alpha"],zg_skinb_node.inputs["_s GlossMap Alpha"])
@@ -169,12 +169,12 @@ class ZGSWTOR_OT_skinsettings_ng_in_shader_editor(bpy.types.Operator):
             if len(zg_skinsettings_nodes) == 0:
                 bpy.context.window.cursor_set("DEFAULT")
                 self.report({"WARNING"}, "No selected Character Skin Settings Nodegroup")
-                context.scene.use_skinsettings_name = ""
+                context.scene.zgswtor_SSNG_use_skinsettings_name = ""
                 return {"CANCELLED"}
             if len(zg_skinsettings_nodes) > 1:
                 bpy.context.window.cursor_set("DEFAULT")
                 self.report({"WARNING"}, "Too many Character Skin Settings Nodegroups selected. Select a single one")
-                context.scene.use_skinsettings_name = ""
+                context.scene.zgswtor_SSNG_use_skinsettings_name = ""
                 return {"CANCELLED"}
 
             zg_skinsettings_node = zg_skinsettings_nodes[0]
@@ -185,7 +185,7 @@ class ZGSWTOR_OT_skinsettings_ng_in_shader_editor(bpy.types.Operator):
                     mat_links.new(zg_skinsettings_node.outputs[output.name],zg_skinb_node.inputs[output.name])
             
             # Special rewiring for Twi'lek characters if checkboxed
-            if context.scene.use_skinsettings_twilek == True:
+            if context.scene.zgswtor_SSNG_use_skinsettings_twilek == True:
                 mat_links.new(zg_skinsettings_node.outputs["Twi'lek GlossMap Color"],zg_skinb_node.inputs["_s GlossMap Color"])
                 mat_links.new(zg_skinsettings_node.outputs["Twi'lek GlossMap Alpha"],zg_skinb_node.inputs["_s GlossMap Alpha"])
 
@@ -200,7 +200,7 @@ class ZGSWTOR_OT_skinsettings_ng_in_shader_editor(bpy.types.Operator):
                     mat_links.remove(link)
 
 
-        context.scene.apply_skinsettings_name = ""
+        context.scene.zgswtor_ASS_apply_skinsettings_name = ""
 
         bpy.context.window.cursor_set("DEFAULT")
         return {"FINISHED"}
@@ -211,12 +211,12 @@ class ZGSWTOR_OT_skinsettings_ng_in_shader_editor(bpy.types.Operator):
 # Registrations
 
 def register():
-    bpy.types.Scene.use_skinsettings_twilek = bpy.props.BoolProperty(
+    bpy.types.Scene.zgswtor_SSNG_use_skinsettings_twilek = bpy.props.BoolProperty(
         name="Override Twi'lek GlossMaps",
         description="If True, disconnect GlossMaps in SkinB shader and connect\nSkin Settings Nodegroup's Twi'lek ones.",
         default = False,
     )
-    bpy.types.Scene.use_skinsettings_name = bpy.props.StringProperty(
+    bpy.types.Scene.zgswtor_SSNG_use_skinsettings_name = bpy.props.StringProperty(
         name="Skin Settings Nodegroup's prefix name",
         description="Name of the character to apply to\nthe Nodegroup's name (\"<name>'s Skin Settings\").\n\n• It is case-sensitive.\n• This field reverts to empty after application.\nCan be changed manually later on.",
         subtype = "NONE",
@@ -231,8 +231,8 @@ def register():
     bpy.utils.register_class(ZGSWTOR_OT_skinsettings_ng_in_shader_editor)
 
 def unregister():
-    del bpy.types.Scene.use_skinsettings_twilek
-    del bpy.types.Scene.use_skinsettings_name
+    del bpy.types.Scene.zgswtor_SSNG_use_skinsettings_twilek
+    del bpy.types.Scene.zgswtor_SSNG_use_skinsettings_name
     # del bpy.types.Scene.skinsettings_ng_in_shader_editors_list
     bpy.utils.unregister_class(ZGSWTOR_OT_skinsettings_ng_in_shader_editor)
 

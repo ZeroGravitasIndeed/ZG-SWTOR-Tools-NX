@@ -36,7 +36,7 @@ class ZGSWTOR_OT_apply_transforms(bpy.types.Operator):
     )
 
     def execute(self, context):
-        self.set_custom_props = context.scene.OAT_set_custom_props
+        self.set_custom_props = context.scene.zgswtor_OAT_set_custom_props
         
         if self.set_custom_props:
             for obj in context.selected_objects:
@@ -70,7 +70,7 @@ class ZGSWTOR_OT_apply_transforms(bpy.types.Operator):
 # Registrations
 def register():
     
-    bpy.types.Scene.OAT_set_custom_props = bpy.props.BoolProperty(
+    bpy.types.Scene.zgswtor_OAT_set_custom_props = bpy.props.BoolProperty(
         name="Set Custom .gr2 Object Properties",
         description="Annotates SWTOR Objects/Skeletons with custom properties that store the\nscale and axis conversion data relative to what a SWTOR object with neutral\nimport settings would show (gr2_scale = 1.0, gr2_axis_conversion = False)\n\n(Position data isn't included)",
         default = True,
@@ -80,7 +80,7 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(ZGSWTOR_OT_apply_transforms)
-    del bpy.types.Scene.OAT_set_custom_props
+    del bpy.types.Scene.zgswtor_OAT_set_custom_props
 
 if __name__ == "__main__":
     register()

@@ -408,19 +408,19 @@ class ZGSWTOR_OT_eyes_separator(bpy.types.Operator):
 def register():
     bpy.utils.register_class(ZGSWTOR_OT_eyes_separator)
     
-    bpy.types.Scene.zg_swca_bind_to_skeleton_bool = bpy.props.BoolProperty(
+    bpy.types.Scene.zgswtor_SWCA_bind_to_skeleton = bpy.props.BoolProperty(
         name="Bind Objects To Skeleton",
         description="Bind all objects to the skeleton, if imported",
         default = True,
     )
 
-    bpy.types.Scene.zg_swca_separate_eyes = bpy.props.BoolProperty(
+    bpy.types.Scene.zgswtor_SWCA_separate_eyes = bpy.props.BoolProperty(
         name="Separate Eyes From Head Object",
         description="Separates the eyes from the character's head object to make them\neasier to rig and animate (certain rigging systems require that).\nNeeds them to be using a material with 'eye' in its name, as separating criteria.\n\nThe result is a single object with both eyes.\nTo further separate them into individual eyes,\nuse the 'As Two Eye Objects' option, too.\n\nThis doesn't affect the ability to keep using\nSWTOR skeletons with the model's eyes",
         default = False,
     )
 
-    bpy.types.Scene.zg_swca_separate_each_eye = bpy.props.BoolProperty(
+    bpy.types.Scene.zgswtor_SWCA_separate_each_eye = bpy.props.BoolProperty(
         name="As Two Eye Objects",
         description="When separating the eyes from the character's head object\nmake each eye its own object and set their origin points\nso that they can also be posed via simple rotations.\n\nThis doesn't affect the ability to keep using\nSWTOR skeletons with the model's eyes",
         default = False,
@@ -430,9 +430,9 @@ def register():
 def unregister():
     bpy.utils.unregister_class(ZGSWTOR_OT_eyes_separator)
     
-    del bpy.types.Scene.zg_swca_bind_to_skeleton_bool
-    del bpy.types.Scene.zg_swca_separate_eyes
-    del bpy.types.Scene.zg_swca_separate_each_eye
+    del bpy.types.Scene.zgswtor_SWCA_bind_to_skeleton
+    del bpy.types.Scene.zgswtor_SWCA_separate_eyes
+    del bpy.types.Scene.zgswtor_SWCA_separate_each_eye
 
 
 if __name__ == "__main__":
