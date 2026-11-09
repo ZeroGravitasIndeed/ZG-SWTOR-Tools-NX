@@ -25,17 +25,21 @@ bl_info = {
 modulesNames = [
     'addon_preferences',
     'addon_ui',
-    
-    'area_collections_exclude_include',
-    'area_collections_group_by_name',
-    'area_reset_group_transforms',  # IN USE?
-    
-    'bake_convert_to_legacy_materials',
-    'bake_twilek_corrections',
-    'bake_save_images',
-    
+
+    'char_pcs_assembler',
     'char_character_prefixer',
     'char_merge_phys_vertex_groups',
+
+    'obj_apply_transforms',
+    'obj_set_swtor_obj_custom_props',
+    'obj_quickscale',
+    'obj_remove_doubles',
+    'obj_remove_doubles_edit_mode',
+    'obj_set_modifiers',
+    
+    # 'bake_convert_to_legacy_materials',
+    'bake_twilek_corrections',
+    'bake_save_images',
 
     'mat_add_custom_external_swtor_shaders',
     'mat_customize_swtor_shaders',
@@ -51,12 +55,9 @@ modulesNames = [
     'mat_skinsettings_ng_in_3d_viewer',
     'mat_skinsettings_ng_in_shader_editor',
 
-    'obj_apply_transforms',
-    'obj_set_swtor_obj_custom_props',
-    'obj_quickscale',
-    'obj_remove_doubles',
-    'obj_remove_doubles_edit_mode',
-    'obj_set_modifiers',
+    'area_collections_exclude_include',
+    'area_collections_group_by_name',
+    'area_reset_group_transforms',  # IN USE?
     
     'anim_clear_bone_translations',
 ]

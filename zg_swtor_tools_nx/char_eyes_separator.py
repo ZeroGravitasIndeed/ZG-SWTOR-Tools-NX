@@ -5,9 +5,6 @@ import bmesh
 
 # Auxiliary functions
 
-import bpy
-import bmesh
-
 def separate_by_material(obj, material_slot_name):
     """
     Separate the polygons of an object that are associated to one of its material slots into a new object.
@@ -81,17 +78,6 @@ def separate_by_material(obj, material_slot_name):
 
     # Return the new object
     return new_obj
-
-
-
-
-
-
-
-
-
-
-
 
 def separate_obj_by_specific_materials(obj_or_obj_name, materials_names, separate = True):
 

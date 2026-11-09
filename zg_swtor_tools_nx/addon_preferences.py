@@ -26,12 +26,23 @@ class addonPreferences(bpy.types.AddonPreferences):
 
     # Preferences properties --------------------
     
+    # Fallback SWTOR resources folder path if no SWTOR Input/Output Tools add-on is enabled
+    # to supply its own SWTOR resources directories' scene-level properties.
+    swtor_resources_folderpath: bpy.props.StringProperty(
+        name = "Resources Folder",
+        description = 'Path to the "resources" folder produced by a SWTOR assets extraction',
+        subtype = "DIR_PATH",
+        default = "Choose or type the folder's path",
+        maxlen = 1024
+    )
+
+    
     # Custom SWTOR shaders blendfile folderpath
     swtor_custom_shaders_blendfile_path: bpy.props.StringProperty(
         name = "Custom Shaders File",
         description = "Path to a Blend file holding custom replacement SWTOR shaders\nfor the current modern ones.\n\n• It defaults to the one stored inside the addon",
         subtype = "FILE_PATH",
-        default = os.path.join(ADDON_ROOT, "rsrc", "Custom SWTOR Shaders.blend"),
+        default = os.path.join(ADDON_ROOT, "addon_resources", "Custom SWTOR Shaders.blend"),
         maxlen = 1024
     )
     
@@ -114,7 +125,7 @@ class ZGSWTOR_OT_reset_custom_shaders_prefs_to_internal(bpy.types.Operator):
     def execute(self, context):
         
         # Default Custom shaders .blend file's filepath
-        default_custom_shaders_blend_filepath = os.path.join(os.path.dirname(__file__), "rsrc" + os.sep + "Custom SWTOR Shaders.blend")
+        default_custom_shaders_blend_filepath = os.path.join(os.path.dirname(__file__), "addon_resources" + os.sep + "Custom SWTOR Shaders.blend")
 
         context.preferences.addons["zg_swtor_tools_nx"].preferences["swtor_custom_shaders_blendfile_path"] = default_custom_shaders_blend_filepath
         

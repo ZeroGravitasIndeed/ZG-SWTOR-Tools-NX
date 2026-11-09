@@ -36,7 +36,7 @@ class ZGSWTOR_OT_remove_doubles_edit_mode(bpy.types.Operator):
 
         # Checking if we are dealing with a .gr2 Add-on with scaling parameters
         checks = requirements_checks()
-        if checks["gr2HasParams"]:
+        if addon_utils.check("swtor_io_tools")[1]:
             if context.preferences.addons["swtor_io_tools"].preferences.gr2_scale_object:
                 gr2_scale = context.preferences.addons["swtor_io_tools"].preferences.gr2_scale_factor
             else:

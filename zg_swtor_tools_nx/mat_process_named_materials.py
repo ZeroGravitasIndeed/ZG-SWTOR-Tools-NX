@@ -634,7 +634,7 @@ class ZGSWTOR_OT_process_named_mats(bpy.types.Operator):
         already_processed_mats = []
         collider_objects = []
 
-        self.use_deprecated_materials = bpy.context.Scene.zgswtor_PNM_use_deprecated_materials
+        self.use_deprecated_materials = bpy.context.scene.zgswtor_PNM_use_deprecated_materials
 
         # Use from Shader Editor
         if self.convert_this_material != "" and self.convert_this_material in bpy.data.materials:
@@ -646,7 +646,7 @@ class ZGSWTOR_OT_process_named_mats(bpy.types.Operator):
             
             # When in the Shadwr Editor we don't do collider collecting
             # and we always overwrite SWTOR materials.
-            bpy.context.Scene.zgswtor_PNM_use_collect_colliders = False
+            bpy.context.scene.zgswtor_PNM_use_collect_colliders = False
             self.use_overwrite = True
 
 
@@ -660,8 +660,8 @@ class ZGSWTOR_OT_process_named_mats(bpy.types.Operator):
         # Use from 3D View
         else:
                         
-            self.use_collect_colliders = bpy.context.Scene.zgswtor_PNM_use_collect_colliders
-            self.use_overwrite = bpy.context.Scene.zgswtor_PNM_use_overwrite
+            self.use_collect_colliders = bpy.context.scene.zgswtor_PNM_use_collect_colliders
+            self.use_overwrite = bpy.context.scene.zgswtor_PNM_use_overwrite
             
             if self.use_selection_only:
                 selected_objects = bpy.context.selected_objects

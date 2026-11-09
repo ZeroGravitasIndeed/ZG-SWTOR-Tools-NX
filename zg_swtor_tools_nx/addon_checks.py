@@ -5,7 +5,7 @@ import os
 
 
 
-ADDON_ROOT = __file__.rsplit(__name__.rsplit(".")[0])[0] + __name__.rsplit(".")[0]
+ADDON_ROOT = Path(__file__).resolve().parent
 
 
 
@@ -33,84 +33,129 @@ def requirements_checks():
     # -----------------------------
     # .gr2 Add-on checks
     
-    if "swtor_io_tools" not in [mod.__name__ for mod in addon_utils.modules()]:
-        checks["gr2"] = False
-        checks["gr2_status"] = "NOT INSTALLED"
-        checks["gr2_status_verbose"] = "NOT INSTALLED. No .gr2 Importer Add-on is currently installed."
-        
-        checks["gr2HasParams"] = False
-        checks["gr2HasParams_status"] = "NOT AVAILABLE"
-        checks["gr2HasParams_status_verbose"] = "NOT AVAILABLE. No .gr2 Importer Add-on is currently installed."
-        
+    if "swtor_io_tools" not in bpy.context.preferences.addons:
+        checks["swIOt"] = False
+        checks["swIOt_status"] = "NOT INSTALLED"
+        checks["swIOt_status_verbose"] = "NOT INSTALLED. No .gr2 Importer Add-on is currently installed."
     else:
-        # if "swtor_io_tools" in bpy.context.preferences.addons:  # More robust?
+        # addon_utils.check() returns a tuple of bools:
+        # (add-on is enabled by default, add-on is enabled right now).
+        # It doesn't check for its existence, hence the previous conditional above.
         if addon_utils.check("swtor_io_tools")[1]:
-            checks["gr2"] = True
-            checks["gr2_status"] = "ENABLED"
-            checks["gr2_status_verbose"] = "ENABLED. A .gr2 Importer Add-on is installed and enabled."
-            
-            if hasattr(bpy.context.preferences.addons["swtor_io_tools"].preferences, "gr2_scale_object"):
-                checks["gr2HasParams"] = True
-                checks["gr2HasParams_status"] = "AVAILABLE"
-                checks["gr2HasParams_status_verbose"] = "AVAILABLE. This .gr2 Importer Add-on has Prefs settings."
-            else:
-                checks["gr2HasParams"] = False
-                checks["gr2HasParams_status"] = "NOT AVAILABLE"
-                checks["gr2HasParams_status_verbose"] = "NOT AVAILABLE. This .gr2 Importer Add-on has no Prefs settings, might be an old version."
-                
+            checks["swIOt"] = True
+            checks["swIOt_status"] = "ENABLED"
+            checks["swIOt_status_verbose"] = "ENABLED. A .gr2 Importer Add-on is installed and enabled."
         else:
-            checks["gr2"] = False
-            checks["gr2_status"] = "DISABLED"
-            checks["gr2_status_verbose"] = "DISABLED. A .gr2 Importer Add-on is installed, but still needs to be enabled."
-                    
-            checks["gr2HasParams"] = False
-            checks["gr2HasParams_status"] = "NOT AVAILABLE"
-            checks["gr2HasParams_status_verbose"] = "NOT AVAILABLE. A .gr2 Importer Add-on is installed, but still needs to be enabled."
+            checks["swIOt"] = False
+            checks["swIOt_status"] = "DISABLED"
+            checks["swIOt_status_verbose"] = "DISABLED. A .gr2 Importer Add-on is installed, but still needs to be enabled."
 
 
 
     # -----------------------------
     # 'resources' folder checks
 
+    if checks["swIOt"] == False:
 
-    swtor_resources_dir = getattr(bpy.context.preferences.addons["swtor_io_tools"].preferences, "swtor_resources_dir", "")
-    is_badly_written = os.sep not in swtor_resources_dir
-    is_unfilled = swtor_resources_dir == "Choose or type the folder's path"
-    is_a_folder = Path(swtor_resources_dir).exists()
-    is_a_resources_folder = ( Path(swtor_resources_dir) / "art/shaders/materials").exists()
-
-    checks["resources"] = is_a_resources_folder
-    
-    if is_unfilled:
+        checks["resources"] = False
         checks["resources_status"] = "NOT SET"
-        checks["resources_status_verbose"] = "NOT SET."
+        checks["resources_status_verbose"] = "NOT SET. No SWTOR IO Tools is enabled to set it."
+
+        checks["legacy_resources"] = False
+        checks["legacy_resources_status"] = "NOT SET"
+        checks["legacy_resources_status_verbose"] = "NOT SET. No SWTOR IO Tools is enabled to set it."
+
     else:
-        if is_badly_written:
-            checks["resources_status"] = "NOT VALID"
-            checks["resources_status_verbose"] = "NOT VALID. This is not a folder path."
+        swtor_resources_dir = getattr(bpy.context.preferences.addons["swtor_io_tools"].preferences, "swtor_resources_dir", "")
+        is_badly_written = os.sep not in swtor_resources_dir
+        is_unfilled = swtor_resources_dir == ""
+        is_a_folder = Path(swtor_resources_dir).exists()
+        is_a_resources_folder = ( Path(swtor_resources_dir) / "art/shaders/materials").exists()
+
+        checks["resources"] = is_a_resources_folder
+        
+        if is_unfilled:
+            checks["resources"] = False
+            checks["resources_status"] = "NOT SET"
+            checks["resources_status_verbose"] = "NOT SET."
         else:
-            if is_a_resources_folder:
-                checks["resources_status"] = "SET"
-                checks["resources_status_verbose"] = "SET. This is a valid 'resources' folder."
+            if is_badly_written:
+                checks["resources"] = False
+                checks["resources_status"] = "NOT VALID"
+                checks["resources_status_verbose"] = "NOT VALID. This is not a folder path."
             else:
-                if is_a_folder:
-                    checks["resources_status"] = "NOT VALID"
-                    checks["resources_status_verbose"] = "NOT VALID. This folder isn't a valid 'resources' directory root."
+                if is_a_resources_folder:
+                    checks["resources"] = True
+                    checks["resources_status"] = "SET"
+                    checks["resources_status_verbose"] = "SET. This is a valid 'resources' folder."
                 else:
-                    checks["resources_status"] = "NOT FOUND"
-                    checks["resources_status_verbose"] = "NOT FOUND. No folder can't be found at the specified path."
+                    if is_a_folder:
+                        checks["resources"] = False
+                        checks["resources_status"] = "NOT VALID"
+                        checks["resources_status_verbose"] = "NOT VALID. This folder isn't a valid 'resources' directory root."
+                    else:
+                        checks["resources"] = False
+                        checks["resources_status"] = "NOT FOUND"
+                        checks["resources_status_verbose"] = "NOT FOUND. No folder can't be found at the specified path."
 
 
 
+
+        swtor_legacy_resources_dir = getattr(bpy.context.preferences.addons["swtor_io_tools"].preferences, "swtor_legacy_resources_dir", "")
+        is_badly_written = os.sep not in swtor_legacy_resources_dir
+        is_unfilled = swtor_legacy_resources_dir == ""
+        is_a_folder = Path(swtor_legacy_resources_dir).exists()
+        is_a_resources_folder = ( Path(swtor_legacy_resources_dir) / "art/shaders/materials").exists()
+        is_a_legacy_resources_folder = not ( Path(swtor_legacy_resources_dir) / "art/dynamic/player_character/head/texture/___psd/modernization").exists()
+
+        checks["legacy_resources"] = is_a_legacy_resources_folder
+        
+        if is_unfilled:
+            checks["legacy_resources"] = False
+            checks["legacy_resources_status"] = "NOT SET"
+            checks["legacy_resources_status_verbose"] = "NOT SET."
+        else:
+            if is_badly_written:
+                checks["legacy_resources"] = False
+                checks["legacy_resources_status"] = "NOT VALID"
+                checks["legacy_resources_status_verbose"] = "NOT VALID. This is not a folder path."
+            else:
+                if is_a_resources_folder:
+                    checks["legacy_resources"] = True
+                    checks["legacy_resources_status"] = "SET"
+                    checks["legacy_resources_status_verbose"] = "SET. This is a valid 'resources' folder."
+                    if is_a_legacy_resources_folder:
+                        checks["legacy_resources"] = True
+                        checks["legacy_resources_status"] = "SET"
+                        checks["legacy_resources_status_verbose"] = "SET. This is a valid Legacy 'resources' folder."
+                    else:
+                        checks["legacy_resources"] = False
+                        checks["legacy_resources_status"] = "NOT LEGACY"
+                        checks["legacy_resources_status_verbose"] = "NOT LEGACY. This 'resources' folder lacks Legacy assets."
+                else:
+                    if is_a_folder:
+                        checks["legacy_resources"] = False
+                        checks["legacy_resources_status"] = "NOT VALID"
+                        checks["legacy_resources_status_verbose"] = "NOT VALID. This folder isn't a valid 'resources' directory root."
+                    else:
+                        checks["legacy_resources"] = False
+                        checks["legacy_resources_status"] = "NOT FOUND"
+                        checks["legacy_resources_status_verbose"] = "NOT FOUND. No folder can't be found at the specified path."
 
     # -----------------------------
     # custom shaders checks
+    # THIS BLOCK WILL NEED RETHINKING depending on whether 3rd party custom shaders will be allowed
+    # (will require restoring the option in addon_pref's UI). See conditional in line 98 for current
+    # temporary solution.
 
     # Default one
-    default_custom_shaders_blend_filepath = os.path.join(ADDON_ROOT, "rsrc", "Custom SWTOR Shaders.blend")
+    default_custom_shaders_blend_filepath = os.path.join(ADDON_ROOT, "addon_resources", "Custom SWTOR Shaders.blend")
 
     # Current one
-    custom_shaders_blend_filepath = getattr(bpy.context.preferences.addons["zg_swtor_tools_nx"].preferences, "swtor_custom_shaders_blendfile_path", "")
+    if "zg_swtor_tools_nx" in bpy.context.preferences.addons:
+        custom_shaders_blend_filepath = getattr(bpy.context.preferences.addons["zg_swtor_tools_nx"].preferences, "swtor_custom_shaders_blendfile_path", "")
+    else:
+        custom_shaders_blend_filepath = default_custom_shaders_blend_filepath
         
     blend_file_badly_written = (".blend" not in custom_shaders_blend_filepath or os.sep not in custom_shaders_blend_filepath)
     blend_file_exists = Path(custom_shaders_blend_filepath).is_file()
@@ -120,8 +165,13 @@ def requirements_checks():
     # (see https://devtalk.blender.org/t/traverse-blend-file-to-get-list-of-collections/10348/14 
     # the '_' avoids actually loading anything )
     if blend_file_exists:
-        with bpy.data.libraries.load(str(custom_shaders_blend_filepath)) as (data_from, _):
-            blend_file_is_valid = "SWTOR - Garment Shader" in data_from.node_groups
+        blend_file_is_valid = True
+        # blend_file_is_valid = False
+        # node_groups_names = None
+        # with bpy.data.libraries.load(custom_shaders_blend_filepath) as (data_from, _):
+        #     return node_groups_names in data_from.node_groups
+        
+        # blend_file_is_valid = "SWTOR - Garment Shader" in node_groups_names
     else:
         blend_file_is_valid = False
 

@@ -1,0 +1,585 @@
+[
+    {
+        "slotName": "meta",
+        "charType": "pc",
+        "charName": "",
+        "nppPath": "pcs.jedi_knight.male.nautolan",
+        "bodyType": "bms",
+        "prefer_legacy_materials": false,
+        "errors": []
+    },
+    {
+        "slotName": "head",
+        "models": [
+            "/art/dynamic/head/model/head_pcnautolan_bms_c05.gr2"
+        ],
+        "materialInfo": {
+            "matPath": "/art/shaders/materials/head_nautolan_bms_pc_a03c01.mat",
+            "ddsPaths": {
+                "paletteMap": "/art/dynamic/npc/nautolan/head/texture/___psd/head_nautolan_bms_pc_a03c01_h.dds",
+                "paletteMaskMap": "/art/dynamic/npc/nautolan/head/texture/___psd/head_nautolan_bms_pc_a03c01_m.dds",
+                "diffuseMap": "/art/dynamic/npc/nautolan/head/texture/___psd/head_nautolan_bms_pc_a03c01_d.dds",
+                "glossMap": "/art/dynamic/npc/nautolan/head/texture/___psd/head_nautolan_bms_pc_a03c01_s.dds",
+                "rotationMap": "/art/dynamic/npc/nautolan/head/texture/___psd/head_nautolan_bms_pc_a03c01_n.dds",
+                "ageMap": "/art/dynamic/player_character/face_customization/scars/scar_nautolan_non_c11_u.dds",
+                "complexionMap": "/art/dynamic/player_character/face_customization/complexion/comp_nautolan_non_c01_u.dds",
+                "facepaintMap": "/art/dynamic/player_character/face_customization/pattern/facepaint_nautolan_non_c01_e_u.dds",
+                "directionMap": "/art/defaultassets/black.dds.dds",
+                "animatedWrinkleMap": "/art/defaultassets/flat_w.dds.dds",
+                "animatedWrinkleMask": "/art/defaultassets/flat_w.dds.dds"
+            },
+            "otherValues": {
+                "derived": "SkinB",
+                "flush": [
+                    "0.47451",
+                    "0.121569",
+                    "0.121569"
+                ],
+                "fleshBrightness": "0",
+                "palette1": [
+                    "0.54144835",
+                    "0.42623928",
+                    "0.26014075",
+                    "1.3386455"
+                ],
+                "palette2": [
+                    "0",
+                    "0.5",
+                    "0",
+                    "1"
+                ],
+                "palette1Specular": [
+                    "1.0",
+                    "1.0",
+                    "1.0"
+                ],
+                "palette2Specular": [
+                    "0",
+                    "0.486275",
+                    "0"
+                ],
+                "palette1MetallicSpecular": [
+                    "0.80392164",
+                    "0.89019614",
+                    "1.0"
+                ],
+                "palette2MetallicSpecular": [
+                    "0",
+                    "0.486275",
+                    "0"
+                ],
+                "materialSkinIndex": "0"
+            },
+            "eyeMatInfo": {
+                "matPath": "/art/shaders/materials/eye_nautolan_pc_a01c01.mat",
+                "ddsPaths": {
+                    "paletteMap": "/art/dynamic/player_character/face_customization/eye/head_nautolan_eye_pc_a01c01_h.dds",
+                    "paletteMaskMap": "/art/dynamic/player_character/face_customization/eye/___psd/head_nautolan_eye_pc_a01c01_m.dds",
+                    "diffuseMap": "/art/dynamic/npc/nautolan/head/texture/___psd/head_nautolan_eye_pc_a01c01_d.dds",
+                    "glossMap": "/art/dynamic/npc/nautolan/head/texture/___psd/head_nautolan_eye_pc_a01c01_s.dds",
+                    "rotationMap": "/art/dynamic/npc/nautolan/head/texture/___psd/head_nautolan_eye_pc_a01c01_n.dds"
+                },
+                "otherValues": {
+                    "derived": "Eye",
+                    "palette1": [
+                        "0.012336847",
+                        "0.7297299",
+                        "-0.353432",
+                        "1.0"
+                    ],
+                    "palette2": [
+                        "0",
+                        "0.5",
+                        "0",
+                        "1"
+                    ],
+                    "palette1Specular": [
+                        "1.0",
+                        "1.0",
+                        "1.0"
+                    ],
+                    "palette2Specular": [
+                        "1",
+                        "0.909804",
+                        "0.666667"
+                    ],
+                    "palette1MetallicSpecular": [
+                        "1.0",
+                        "1.0",
+                        "1.0"
+                    ],
+                    "palette2MetallicSpecular": [
+                        "0.611765",
+                        "0.921569",
+                        "1"
+                    ],
+                    "materialSkinIndex": "0"
+                }
+            }
+        }
+    },
+    {
+        "slotName": "hand",
+        "models": [
+            "/art/dynamic/hand/model/hand_naked_bms_archetype.gr2"
+        ],
+        "materialInfo": {
+            "matPath": "/art/shaders/materials/hand_naked_nautolan_pc_a01c01_bms.mat",
+            "ddsPaths": {
+                "paletteMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/hand_naked_nautolan_young_a01_bms_h.dds",
+                "paletteMaskMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/hand_naked_nautolan_young_a01_bms_m.dds",
+                "diffuseMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/hand_naked_nautolan_young_a01_bms_d.dds",
+                "glossMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/hand_naked_nautolan_young_a01_bms_s.dds",
+                "rotationMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/hand_naked_nautolan_young_a01_bms_n.dds",
+                "directionMap": "/art/defaultassets/black.dds.dds"
+            },
+            "otherValues": {
+                "derived": "SkinB",
+                "flush": [
+                    "0.47451",
+                    "0.121569",
+                    "0.121569"
+                ],
+                "fleshBrightness": "0.1",
+                "palette1": [
+                    "0.54144835",
+                    "0.42623928",
+                    "0.26014075",
+                    "1.3386455"
+                ],
+                "palette2": [
+                    "0",
+                    "0.5",
+                    "0",
+                    "1"
+                ],
+                "palette1Specular": [
+                    "1.0",
+                    "1.0",
+                    "1.0"
+                ],
+                "palette2Specular": [
+                    "0",
+                    "0.482353",
+                    "0"
+                ],
+                "palette1MetallicSpecular": [
+                    "0.80392164",
+                    "0.89019614",
+                    "1.0"
+                ],
+                "palette2MetallicSpecular": [
+                    "0",
+                    "0.482353",
+                    "0"
+                ],
+                "materialSkinIndex": "0"
+            }
+        }
+    },
+    {
+        "slotName": "boot",
+        "models": [
+            "/art/dynamic/boot/model/boot_naked_bms_archetype.gr2"
+        ],
+        "materialInfo": {
+            "matPath": "/art/shaders/materials/boot_naked_nautolan_pc_a01c01_bms.mat",
+            "ddsPaths": {
+                "paletteMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/boot_naked_nautolan_young_a01_bms_h.dds",
+                "paletteMaskMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/boot_naked_nautolan_young_a01_bms_m.dds",
+                "diffuseMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/boot_naked_nautolan_young_a01_bms_d.dds",
+                "glossMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/boot_naked_nautolan_young_a01_bms_s.dds",
+                "rotationMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/boot_naked_nautolan_young_a01_bms_n.dds",
+                "directionMap": "/art/defaultassets/black.dds.dds"
+            },
+            "otherValues": {
+                "derived": "SkinB",
+                "flush": [
+                    "0.47451",
+                    "0.121569",
+                    "0.121569"
+                ],
+                "fleshBrightness": "0.1",
+                "palette1": [
+                    "0.54144835",
+                    "0.42623928",
+                    "0.26014075",
+                    "1.3386455"
+                ],
+                "palette2": [
+                    "0",
+                    "0.5",
+                    "0",
+                    "1"
+                ],
+                "palette1Specular": [
+                    "1.0",
+                    "1.0",
+                    "1.0"
+                ],
+                "palette2Specular": [
+                    "0",
+                    "0.482353",
+                    "0"
+                ],
+                "palette1MetallicSpecular": [
+                    "0.80392164",
+                    "0.89019614",
+                    "1.0"
+                ],
+                "palette2MetallicSpecular": [
+                    "0",
+                    "0.482353",
+                    "0"
+                ],
+                "materialSkinIndex": "0"
+            }
+        }
+    },
+    {
+        "slotName": "leg",
+        "models": [
+            "/art/dynamic/leg/model/leg_underwear_bms_archetype.gr2"
+        ],
+        "materialInfo": {
+            "matPath": "/art/shaders/materials/leg_pantskin_non_non_a01underwear02_m_v01.mat",
+            "ddsPaths": {
+                "paletteMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/leg_pantskin_non_non_a01underwear02_m_v01_h.dds",
+                "paletteMaskMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/leg_pantskin_non_non_a01underwear02_m_v01_m.dds",
+                "diffuseMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/leg_pantskin_non_non_a01underwear02_m_v01_d.dds",
+                "glossMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/leg_pantskin_non_non_a01underwear02_m_v01_s.dds",
+                "rotationMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/leg_pantskin_non_non_a01underwear02_m_v01_n.dds",
+                "directionMap": "/art/defaultassets/black.dds.dds"
+            },
+            "otherValues": {
+                "derived": "Garment",
+                "flush": [
+                    "0.47451",
+                    "0.121569",
+                    "0.121569"
+                ],
+                "fleshBrightness": "0.1",
+                "palette1": [
+                    "0",
+                    "0.5",
+                    "0",
+                    "1"
+                ],
+                "palette2": [
+                    "0",
+                    "0.5",
+                    "0",
+                    "1"
+                ],
+                "palette1Specular": [
+                    "0",
+                    "0.498039",
+                    "0"
+                ],
+                "palette2Specular": [
+                    "0",
+                    "0.498039",
+                    "0"
+                ],
+                "palette1MetallicSpecular": [
+                    "1",
+                    "1",
+                    "1"
+                ],
+                "palette2MetallicSpecular": [
+                    "1",
+                    "1",
+                    "1"
+                ],
+                "materialSkinIndex": "1"
+            }
+        }
+    },
+    {
+        "slotName": "chest",
+        "models": [
+            "/art/dynamic/chest/model/chest_naked_bms_archetype.gr2"
+        ],
+        "materialInfo": {
+            "matPath": "/art/shaders/materials/chest_naked_nautolan_pc_a01c01_bms.mat",
+            "ddsPaths": {
+                "paletteMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/chest_naked_nautolan_young_a01_bms_h.dds",
+                "paletteMaskMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/chest_naked_nautolan_young_a01_bms_m.dds",
+                "diffuseMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/chest_naked_nautolan_pc_a01c01_bms_d.dds",
+                "glossMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/chest_naked_nautolan_young_a01_bms_s.dds",
+                "rotationMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/chest_naked_nautolan_young_a01_bms_n.dds",
+                "directionMap": "/art/defaultassets/black.dds.dds"
+            },
+            "otherValues": {
+                "derived": "SkinB",
+                "flush": [
+                    "0.47451",
+                    "0.121569",
+                    "0.121569"
+                ],
+                "fleshBrightness": "0.1",
+                "palette1": [
+                    "0.54144835",
+                    "0.42623928",
+                    "0.26014075",
+                    "1.3386455"
+                ],
+                "palette2": [
+                    "0",
+                    "0.5",
+                    "0",
+                    "1"
+                ],
+                "palette1Specular": [
+                    "1.0",
+                    "1.0",
+                    "1.0"
+                ],
+                "palette2Specular": [
+                    "0",
+                    "0.482353",
+                    "0"
+                ],
+                "palette1MetallicSpecular": [
+                    "0.80392164",
+                    "0.89019614",
+                    "1.0"
+                ],
+                "palette2MetallicSpecular": [
+                    "0",
+                    "0.482353",
+                    "0"
+                ],
+                "materialSkinIndex": "1"
+            }
+        }
+    },
+    {
+        "slotName": "skinMats",
+        "models": [],
+        "materialInfo": {
+            "mats": [
+                {
+                    "slotName": "boot",
+                    "materialInfo": {
+                        "matPath": "/art/shaders/materials/boot_naked_nautolan_pc_a01c01_bms.mat"
+                    },
+                    "ddsPaths": {
+                        "paletteMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/boot_naked_nautolan_young_a01_bms_h.dds",
+                        "paletteMaskMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/boot_naked_nautolan_young_a01_bms_m.dds",
+                        "diffuseMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/boot_naked_nautolan_young_a01_bms_d.dds",
+                        "glossMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/boot_naked_nautolan_young_a01_bms_s.dds",
+                        "rotationMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/boot_naked_nautolan_young_a01_bms_n.dds",
+                        "directionMap": "/art/defaultassets/black.dds.dds"
+                    },
+                    "otherValues": {
+                        "derived": "SkinB",
+                        "flush": [
+                            "0.47451",
+                            "0.121569",
+                            "0.121569"
+                        ],
+                        "fleshBrightness": "0.1",
+                        "palette1": [
+                            "0.54144835",
+                            "0.42623928",
+                            "0.26014075",
+                            "1.3386455"
+                        ],
+                        "palette2": [
+                            "0",
+                            "0.5",
+                            "0",
+                            "1"
+                        ],
+                        "palette1Specular": [
+                            "1.0",
+                            "1.0",
+                            "1.0"
+                        ],
+                        "palette2Specular": [
+                            "0",
+                            "0.482353",
+                            "0"
+                        ],
+                        "palette1MetallicSpecular": [
+                            "0.80392164",
+                            "0.89019614",
+                            "1.0"
+                        ],
+                        "palette2MetallicSpecular": [
+                            "0",
+                            "0.482353",
+                            "0"
+                        ]
+                    }
+                },
+                {
+                    "slotName": "chest",
+                    "materialInfo": {
+                        "matPath": "/art/shaders/materials/chest_naked_nautolan_pc_a01c01_bms.mat"
+                    },
+                    "ddsPaths": {
+                        "paletteMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/chest_naked_nautolan_young_a01_bms_h.dds",
+                        "paletteMaskMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/chest_naked_nautolan_young_a01_bms_m.dds",
+                        "diffuseMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/chest_naked_nautolan_pc_a01c01_bms_d.dds",
+                        "glossMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/chest_naked_nautolan_young_a01_bms_s.dds",
+                        "rotationMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/chest_naked_nautolan_young_a01_bms_n.dds",
+                        "directionMap": "/art/defaultassets/black.dds.dds"
+                    },
+                    "otherValues": {
+                        "derived": "SkinB",
+                        "flush": [
+                            "0.47451",
+                            "0.121569",
+                            "0.121569"
+                        ],
+                        "fleshBrightness": "0.1",
+                        "palette1": [
+                            "0.54144835",
+                            "0.42623928",
+                            "0.26014075",
+                            "1.3386455"
+                        ],
+                        "palette2": [
+                            "0",
+                            "0.5",
+                            "0",
+                            "1"
+                        ],
+                        "palette1Specular": [
+                            "1.0",
+                            "1.0",
+                            "1.0"
+                        ],
+                        "palette2Specular": [
+                            "0",
+                            "0.482353",
+                            "0"
+                        ],
+                        "palette1MetallicSpecular": [
+                            "0.80392164",
+                            "0.89019614",
+                            "1.0"
+                        ],
+                        "palette2MetallicSpecular": [
+                            "0",
+                            "0.482353",
+                            "0"
+                        ]
+                    }
+                },
+                {
+                    "slotName": "hand",
+                    "materialInfo": {
+                        "matPath": "/art/shaders/materials/hand_naked_nautolan_pc_a01c01_bms.mat"
+                    },
+                    "ddsPaths": {
+                        "paletteMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/hand_naked_nautolan_young_a01_bms_h.dds",
+                        "paletteMaskMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/hand_naked_nautolan_young_a01_bms_m.dds",
+                        "diffuseMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/hand_naked_nautolan_young_a01_bms_d.dds",
+                        "glossMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/hand_naked_nautolan_young_a01_bms_s.dds",
+                        "rotationMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/hand_naked_nautolan_young_a01_bms_n.dds",
+                        "directionMap": "/art/defaultassets/black.dds.dds"
+                    },
+                    "otherValues": {
+                        "derived": "SkinB",
+                        "flush": [
+                            "0.47451",
+                            "0.121569",
+                            "0.121569"
+                        ],
+                        "fleshBrightness": "0.1",
+                        "palette1": [
+                            "0.54144835",
+                            "0.42623928",
+                            "0.26014075",
+                            "1.3386455"
+                        ],
+                        "palette2": [
+                            "0",
+                            "0.5",
+                            "0",
+                            "1"
+                        ],
+                        "palette1Specular": [
+                            "1.0",
+                            "1.0",
+                            "1.0"
+                        ],
+                        "palette2Specular": [
+                            "0",
+                            "0.482353",
+                            "0"
+                        ],
+                        "palette1MetallicSpecular": [
+                            "0.80392164",
+                            "0.89019614",
+                            "1.0"
+                        ],
+                        "palette2MetallicSpecular": [
+                            "0",
+                            "0.482353",
+                            "0"
+                        ]
+                    }
+                },
+                {
+                    "slotName": "leg",
+                    "materialInfo": {
+                        "matPath": "/art/shaders/materials/leg_naked_nautolan_pc_a01c01_bms.mat"
+                    },
+                    "ddsPaths": {
+                        "paletteMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/leg_naked_nautolan_young_a01_bms_h.dds",
+                        "paletteMaskMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/leg_naked_nautolan_young_a01_bms_m.dds",
+                        "diffuseMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/leg_naked_nautolan_young_a01_bms_d.dds",
+                        "glossMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/leg_naked_nautolan_young_a01_bms_s.dds",
+                        "rotationMap": "/art/dynamic/player_character/outfit/all_naked_body/texture/___psd/leg_naked_nautolan_young_a01_bms_n.dds",
+                        "directionMap": "/art/defaultassets/black.dds.dds"
+                    },
+                    "otherValues": {
+                        "derived": "SkinB",
+                        "flush": [
+                            "0.47451",
+                            "0.121569",
+                            "0.121569"
+                        ],
+                        "fleshBrightness": "0.1",
+                        "palette1": [
+                            "0.54144835",
+                            "0.42623928",
+                            "0.26014075",
+                            "1.3386455"
+                        ],
+                        "palette2": [
+                            "0",
+                            "0.5",
+                            "0",
+                            "1"
+                        ],
+                        "palette1Specular": [
+                            "1.0",
+                            "1.0",
+                            "1.0"
+                        ],
+                        "palette2Specular": [
+                            "0",
+                            "0.482353",
+                            "0"
+                        ],
+                        "palette1MetallicSpecular": [
+                            "0.80392164",
+                            "0.89019614",
+                            "1.0"
+                        ],
+                        "palette2MetallicSpecular": [
+                            "0",
+                            "0.482353",
+                            "0"
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+]
