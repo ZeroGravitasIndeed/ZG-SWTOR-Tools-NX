@@ -47,13 +47,13 @@ class ZGSWTOR_PT_status_3dview(bpy.types.Panel):
 
 
         # Status lines
-        tool_section_zgstatus.alert = not checks["swIOt"]
-        tool_section_zgstatus.label(text="• SWTOR I/O Tools Add-on: " + checks["swIOt_status"])
+        tool_section_zgstatus.alert = not checks["swtor_io_tools"]
+        tool_section_zgstatus.label(text="• SWTOR I/O Tools Add-on: " + checks["swtor_io_tools_status"])
 
         tool_section_zgstatus.alert = not checks["resources"]
         tool_section_zgstatus.label(text="• SWTOR 'resources' Folder: " + checks["resources_status"])
 
-        tool_section_zgstatus.alert = not checks["resources"]
+        tool_section_zgstatus.alert = not checks["legacy_resources"]
         tool_section_zgstatus.label(text="• SWTOR Legacy 'resources': " + checks["legacy_resources_status"])
 
         # tool_section_zgstatus.alert = not checks["custom_shaders"]
@@ -64,7 +64,7 @@ class ZGSWTOR_PT_status_3dview(bpy.types.Panel):
         if (
             not checks["resources"]
             or not checks["custom_shaders"]
-            or not checks["swIOt"]
+            or not checks["swtor_io_tools"]
             ):
                         
             tool_section_info = layout.column(align=True)
@@ -72,39 +72,33 @@ class ZGSWTOR_PT_status_3dview(bpy.types.Panel):
             tool_section_info.label(text="Tools showing up in red below need")
             tool_section_info.label(text="to satisfy certain requirements")
             tool_section_info.label(text="(more info in their tooltips).")
+            
+        
+        # tool_section_iotoolspref.operator("zgswtor.open_gr2_addon_preferences", text="SWTOR I/O Tools Add-on's Prefs")        
+        if checks["swtor_io_tools_status"] != "NOT INSTALLED":
 
 
-        # swtor_ui_tools prefs and partial settings UI
-        if checks["swIOt_status"] == "DISABLED":
+            tool_section_iotoolspref = layout.box().column(align=False)
+            tool_section_iotoolspref.separator(factor=Y_SCALING_SPACER)
             
-            tool_section_gr2pref = layout.box().column(align=False)
-            tool_section_gr2pref.scale_y = Y_SCALING_GRAL
-            tool_section_gr2pref.separator(factor=Y_SCALING_SPACER)
-            
-            tool_section_gr2pref.operator("zgswtor.open_gr2_addon_preferences", text=".gr2 Add-on's Prefs")
-            
-        elif checks["swIOt_status"] == "ENABLED":
-            
-            gr2_addon_prefs = bpy.context.preferences.addons["swtor_io_tools"].preferences
+            # tool_section_iotoolspref.alert = not checks["swtor_io_tools"]
+            tool_section_iotoolspref.operator("zgswtor.open_gr2_addon_preferences", text="SWTOR I/O Tools Add-on's Prefs")
 
-            tool_section_gr2pref = layout.box().column(align=False)
-            tool_section_gr2pref.separator(factor=Y_SCALING_SPACER)
-            
-            tool_section_gr2pref.alert = not checks["swIOt"]
-            tool_section_gr2pref.operator("zgswtor.open_gr2_addon_preferences", text="SWTOR I/O Tools Add-on's Prefs")
+            if checks["swtor_io_tools"] == True:
+                gr2_addon_prefs = bpy.context.preferences.addons["swtor_io_tools"].preferences
 
-            tool_section_gr2pref.scale_y = Y_SCALING_GRAL
-            tool_section_gr2pref.label(text=".gr2 Models Import / Handling Settings:")
-            split_row = tool_section_gr2pref.split(factor=0.5)
-            col1 = split_row.column()
-            col2 = split_row.column()
-            col1.prop(gr2_addon_prefs,"gr2_scale_object", text="Scale By",)
-            col2.prop(gr2_addon_prefs,"gr2_scale_factor", text="")
-            col2.enabled = gr2_addon_prefs.gr2_scale_object
+                tool_section_iotoolspref.scale_y = Y_SCALING_GRAL
+                tool_section_iotoolspref.label(text=".gr2 Models Import / Handling Settings:")
+                split_row = tool_section_iotoolspref.split(factor=0.5)
+                col1 = split_row.column()
+                col2 = split_row.column()
+                col1.prop(gr2_addon_prefs,"gr2_scale_object", text="Scale By",)
+                col2.prop(gr2_addon_prefs,"gr2_scale_factor", text="")
+                col2.enabled = gr2_addon_prefs.gr2_scale_object
 
-            tool_section_gr2pref.prop(gr2_addon_prefs,"gr2_apply_axis_conversion")
+                tool_section_iotoolspref.prop(gr2_addon_prefs,"gr2_apply_axis_conversion")
             
-                
+
 
 
         # use swtor_ui_tools .gr2 import settings checkbox
@@ -173,7 +167,6 @@ class ZGSWTOR_PT_character_tools(bpy.types.Panel):
         # region
         # ------------------------
         tool_section = layout.box()
-        tool_section.alert = not checks["resources"]
         
         _SLIDERS_NAMES = (
             'appSlotHead',
@@ -191,14 +184,19 @@ class ZGSWTOR_PT_character_tools(bpy.types.Panel):
         sliders_labels = context.scene.zgswtor_pcs_sliders_labels
         sliders_limits = context.scene.zgswtor_pcs_sliders_limits
 
+        heading = tool_section.column()
+        heading.label(text="PLAYER CHARACTER ASSEMBLER")
 
-        tool_section.label(text="PLAYER CHARACTER ASSEMBLER")
+        
         tool_section.separator(type="LINE")
 
 
         # MENUS BLOCK
         
         split=tool_section.split(factor=0.35)
+        split.enabled = checks["swtor_io_tools"] and checks["resources"]
+        split.alert = not split.enabled
+
         
         split_col=split.column()
         split_col.label(text="Class")
@@ -222,9 +220,14 @@ class ZGSWTOR_PT_character_tools(bpy.types.Panel):
         fields_width_px = 110  # Desired width
         labels_width_fac = (1 - (fields_width_px / sidebar_width_px) )
         split=tool_section.split(factor=labels_width_fac)
+        split.enabled = checks["swtor_io_tools"] and checks["resources"]
+        split.alert = not split.enabled
+
         
         # Labels column.
         split_col=split.column()
+        split.enabled = checks["swtor_io_tools"] and checks["resources"]
+        split.alert = not split.enabled
         
         split_col.label(text="Body Type")
         
@@ -245,7 +248,7 @@ class ZGSWTOR_PT_character_tools(bpy.types.Panel):
         split_col_row.prop(sliders, "pcs_bodytype", text="")
         split_col_row.label(text=" of 4")
 
-        # 
+        # Rest of sliders
         for slider_name in _SLIDERS_NAMES:
             slider_label = getattr(sliders_labels, slider_name)
             slider_limit = getattr(sliders_limits, slider_name)
@@ -276,7 +279,13 @@ class ZGSWTOR_PT_character_tools(bpy.types.Panel):
         
         # Interactive Mode checkbox.
         split_row = split.row()
+        split_row.enabled = checks["swtor_io_tools"] and checks["resources"]
+        split_row.alert = not split.enabled
+
         split_row.prop(context.scene, "zgswtor_pcs_interactive_mode", text="Interactive Mode")
+        split_row.enabled = checks["swtor_io_tools"] and checks["resources"]
+        split_row.alert = not split.enabled
+
     
         # Assemble button bound to the operator; scale_y enlarges it.
         split_row = split.row()
@@ -285,6 +294,9 @@ class ZGSWTOR_PT_character_tools(bpy.types.Panel):
         
         # Save as JSON button
         save_json_row = tool_section.row()
+        save_json_row.enabled = checks["swtor_io_tools"] and checks["resources"]
+        save_json_row.alert = not split.enabled
+
         save_json_row.operator("zgswtor.pcs_json_saver", text="Save as JSON file")
         save_json_row.enabled = checks["legacy_resources"]
 
@@ -791,7 +803,7 @@ class ZGSWTOR_PT_materials_tools(bpy.types.Panel):
         # # region
         # # ------------------------
         # tool_section = layout.box().column(align=True)
-        # tool_section.enabled = checks["resources"] and checks["swIOt"]
+        # tool_section.enabled = checks["resources"] and checks["swtor_io_tools"]
         # tool_section.alert = tool_section.enabled is False
 
         # tool_section.label(text="Process Named Materials In")
@@ -829,7 +841,7 @@ class ZGSWTOR_PT_materials_tools(bpy.types.Panel):
         # split = tool_section.split(factor= 0.7, align=True)
 
         # col_left, col_right = split.column(align=True), split.column(align=True)
-        # col_left.alert = col_right.alert = not checks["swIOt"]
+        # col_left.alert = col_right.alert = not checks["swtor_io_tools"]
 
         # process_mats_sel = col_left.operator("zgswtor.customize_swtor_shaders", text="Selected Objects")
         # col_left.enabled = len(bpy.context.selected_objects) != 0
@@ -848,7 +860,7 @@ class ZGSWTOR_PT_materials_tools(bpy.types.Panel):
         # dimmable_row2.prop(context.scene, "zgswtor_ACESS_use_linking", text="Link instead of Append")
         
         # dimmable_row3 = tool_section.row(align=True)
-        # dimmable_row3.enabled = checks["swIOt"]
+        # dimmable_row3.enabled = checks["swtor_io_tools"]
         # dimmable_row3.prop(context.scene, "zgswtor_CSS_preserve_atroxa_shaders", text="Preserve Original Shaders")
         # ------------------------
         # endregion
@@ -1058,8 +1070,8 @@ class ZGSWTOR_PT_status_node_editor(bpy.types.Panel):
         tool_section_zgstatus = layout.column(align=True)
         tool_section_zgstatus.scale_y = Y_SCALING_INFO
 
-        tool_section_zgstatus.alert = not checks["swIOt"]
-        tool_section_zgstatus.label(text="• .gr2 Add-on: " + checks["swIOt_status"])
+        tool_section_zgstatus.alert = not checks["swtor_io_tools"]
+        tool_section_zgstatus.label(text="• .gr2 Add-on: " + checks["swtor_io_tools_status"])
 
         tool_section_zgstatus.alert = not checks["resources"]
         tool_section_zgstatus.label(text="• 'resources' Folder: " + checks["resources_status"])
@@ -1072,7 +1084,7 @@ class ZGSWTOR_PT_status_node_editor(bpy.types.Panel):
         if (
             not checks["resources"]
             or not checks["custom_shaders"]
-            or not checks["swIOt"]
+            or not checks["swtor_io_tools"]
             ):
                         
             tool_section_info = layout.column(align=True)
@@ -1084,7 +1096,7 @@ class ZGSWTOR_PT_status_node_editor(bpy.types.Panel):
 
 
         # .gr2 Prefs
-        if checks["swIOt_status"] == "DISABLED":
+        if checks["swtor_io_tools_status"] == "DISABLED":
             
             tool_section_gr2pref = layout.column(align=False)
             tool_section_gr2pref.scale_y = Y_SCALING_GRAL
@@ -1120,8 +1132,8 @@ class ZGSWTOR_PT_status_node_editor(bpy.types.Panel):
 #         # ------------------------
 #         tool_section = layout.box().column(align=True)
         
-#         tool_section.enabled = checks["resources"] and checks["swIOt"] and bpy.context.material != None
-#         tool_section.alert = not checks["resources"] and checks["swIOt"]
+#         tool_section.enabled = checks["resources"] and checks["swtor_io_tools"] and bpy.context.material != None
+#         tool_section.alert = not checks["resources"] and checks["swtor_io_tools"]
 
 #         tool_section.label(text="Named Materials Processor")
             

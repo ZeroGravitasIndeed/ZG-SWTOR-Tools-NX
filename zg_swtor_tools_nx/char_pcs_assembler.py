@@ -148,7 +148,7 @@ def delete_collection_recursive(collection):
 # that will fill _SWTOR_DATA
 # -----------------------------------------------------------------------------
 
-def load_bundled_swtor_data():
+def load_swtor_bundled_data():
     '''
     Loads any needed SWTOR data in this add-on's addon_resources subfolder
     to the _SWTOR_DATA "constant".
@@ -237,8 +237,34 @@ def load_bundled_swtor_data():
             _SWTOR_DATA['pcs_labels'] = pcs_labels
 
 
+
+
     print('SWTOR data loaded')
     
+
+def load_swtor_xml_data():
+    # Preload index.xml files to avoid constantly re-opening and re-parsing them
+    # The SWTOR IO Tools add-on is assumed to be installed and enabled, as this
+    # tool isn't allowed to be run without it.
+
+    print("Loading index.xml files data once")
+    
+    swtor_io_tools_prefs = bpy.context.preferences.addons["swtor_io_tools"].preferences
+    swtor_resources_dir = getattr(swtor_io_tools_prefs, "swtor_resources_dir")
+
+    _SWTOR_DATA['root_xml_skincolor']   = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/skincolor/index.xml')  )
+    _SWTOR_DATA['root_xml_eyecolor']    = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/eyecolor/index.xml')   )
+    _SWTOR_DATA['root_xml_haircolor']   = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/haircolor/index.xml')  )
+    _SWTOR_DATA['root_xml_age']         = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/age/index.xml')        )
+    _SWTOR_DATA['root_xml_complexion']  = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/complexion/index.xml') )
+    _SWTOR_DATA['root_xml_facepaint']   = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/facepaint/index.xml')  )
+    _SWTOR_DATA['root_xml_head']        = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/head/index.xml')       )
+    _SWTOR_DATA['root_xml_hair']        = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/hair/index.xml')       )
+    _SWTOR_DATA['root_xml_facehair']    = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/facehair/index.xml')   )
+
+
+
+
 
 
 
@@ -690,6 +716,11 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
     
 
     # ALL DYNAMIC NODES DATA IS ALREADY LOADED IN ADDON_RESOURCES["dynamic"]
+
+    # This preloads all index.xml data    
+    if not 'root_xml_head' in _SWTOR_DATA:
+        load_swtor_xml_data()
+
     
     swtor_io_tools_prefs = bpy.context.preferences.addons["swtor_io_tools"].preferences
     
@@ -727,8 +758,8 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
         data = ami_data['appSlotSkinColor']['value']
         appAppearanceSlotModelID = data['appAppearanceSlotModelID']
         
-        root = open_xml_file(os.path.normpath( f"{swtor_resources_dir}art/dynamic/skincolor/index.xml"))
-        asset = root.find(f"./Asset[ID='{appAppearanceSlotModelID}']")
+        # root_xml_skincolor = open_xml_file(os.path.normpath( f"{swtor_resources_dir}art/dynamic/skincolor/index.xml"))
+        asset = _SWTOR_DATA['root_xml_skincolor'].find(f"./Asset[ID='{appAppearanceSlotModelID}']")
         
         basefile = asset.find('BaseFile').text
         node_name = f'dynamic.skincolor.{os.path.splitext(os.path.basename(basefile))[0]}'
@@ -743,8 +774,8 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
         data = ami_data['appSlotEyeColor']['value']
         appAppearanceSlotModelID = data['appAppearanceSlotModelID']
         
-        root = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/eyecolor/index.xml') )
-        asset = root.find(f"./Asset[ID='{appAppearanceSlotModelID}']")
+        # root_xml_eyecolor = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/eyecolor/index.xml') )
+        asset = _SWTOR_DATA['root_xml_eyecolor'].find(f"./Asset[ID='{appAppearanceSlotModelID}']")
         
         basefile = asset.find('BaseFile').text
         node_name = f'dynamic.eyecolor.{os.path.splitext(os.path.basename(basefile))[0]}'
@@ -759,8 +790,8 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
         data = ami_data['appSlotHairColor']['value']
         appAppearanceSlotModelID = data['appAppearanceSlotModelID']
         
-        root = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/haircolor/index.xml') )
-        asset = root.find(f"./Asset[ID='{appAppearanceSlotModelID}']")
+        # root_xml_haircolor = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/haircolor/index.xml') )
+        asset = _SWTOR_DATA['root_xml_haircolor'].find(f"./Asset[ID='{appAppearanceSlotModelID}']")
         
         basefile = asset.find('BaseFile').text
         node_name = f'dynamic.haircolor.{os.path.splitext(os.path.basename(basefile))[0]}'
@@ -779,8 +810,8 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
         data = ami_data['appSlotAge']['value']
         appAppearanceSlotModelID = data['appAppearanceSlotModelID']
         
-        root = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/age/index.xml') )
-        asset = root.find(f"./Asset[ID='{appAppearanceSlotModelID}']")
+        # root_xml_age = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/age/index.xml') )
+        asset = _SWTOR_DATA['root_xml_age'].find(f"./Asset[ID='{appAppearanceSlotModelID}']")
         
         age_basefile = asset.find('BaseFile').text
 
@@ -792,8 +823,8 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
         data = ami_data['appSlotComplexion']['value']
         appAppearanceSlotModelID = data['appAppearanceSlotModelID']
         
-        root = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/complexion/index.xml') )
-        asset = root.find(f"./Asset[ID='{appAppearanceSlotModelID}']")
+        # root_xml_complexion = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/complexion/index.xml') )
+        asset = _SWTOR_DATA['root_xml_complexion'].find(f"./Asset[ID='{appAppearanceSlotModelID}']")
         
         complexion_basefile = asset.find('BaseFile').text
 
@@ -805,8 +836,8 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
         data = ami_data['appSlotFacePaint']['value']
         appAppearanceSlotModelID = data['appAppearanceSlotModelID']
         
-        root = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/facepaint/index.xml') )
-        asset = root.find(f"./Asset[ID='{appAppearanceSlotModelID}']")
+        # root_xml_facepaint = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/facepaint/index.xml') )
+        asset = _SWTOR_DATA['root_xml_facepaint'].find(f"./Asset[ID='{appAppearanceSlotModelID}']")
         
         facepaint_basefile = asset.find('BaseFile').text
 
@@ -826,8 +857,8 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
     # appAppearanceSlotFxData         = data['appAppearanceSlotFxData']
 
 
-    root = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/head/index.xml') )
-    asset = root.find( f"./Asset[ID='{appAppearanceSlotModelID}']" )
+    # root_xml_head = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/head/index.xml') )
+    asset = _SWTOR_DATA['root_xml_head'].find( f"./Asset[ID='{appAppearanceSlotModelID}']" )
     
     # Base head model
     head_models = [asset.find("BaseFile").text]  # models accumulate in a list
@@ -990,8 +1021,8 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
         appAppearanceSlotMaterialIndex  = data['appAppearanceSlotMaterialIndex']
         appAppearanceSlotAttachments	= data['appAppearanceSlotAttachments']  # specific attachments to use
         
-        root = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/hair/index.xml') )
-        asset = root.find(f"./Asset[ID='{appAppearanceSlotModelID}']")
+        # root_xml_hair = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/hair/index.xml') )
+        asset = _SWTOR_DATA['root_xml_hair'].find(f"./Asset[ID='{appAppearanceSlotModelID}']")
         
         hair_models = []  # models accumulate in a list
         
@@ -1048,8 +1079,8 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
         appAppearanceSlotMaterialIndex  = data['appAppearanceSlotMaterialIndex']
         appAppearanceSlotAttachments	= data['appAppearanceSlotAttachments']  # specific attachments to use
         
-        root = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/facehair/index.xml') )
-        asset = root.find(f"./Asset[ID='{appAppearanceSlotModelID}']")
+        # root_xml_facehair = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/facehair/index.xml') )
+        asset = _SWTOR_DATA['root_xml_facehair'].find(f"./Asset[ID='{appAppearanceSlotModelID}']")
    
         facehair_models = []  # models accumulate in a list
      
@@ -2253,7 +2284,14 @@ class ZGSWTOR_PCS_OT_assembler(Operator):
     bl_label = "Assemble Player Character"
     bl_idname = "zgswtor.pcs_assembler"
     bl_description = (
-        "Assembles a SWTOR Player Character out of its settings in SWTOR's Appearance Booth\n"
+        "Assembles a SWTOR Player Character per its settings in SWTOR's Appearance Designer Kiosk\n"
+        "\n"
+        "We recommend using the settings shown in the Appearance Designer Kiosk instead of\n"
+        "the ones used at character creation, as the latter hides unlocked Cartel Market\n"
+        "customizations and renumbers the rest, while the former lists them all.\n"
+        "\n"
+        "There is an Appearance Designer Kiosk at the Cartel Bazaar in the Fleets' stations\n"
+        "where a player character's settings can be read for free"
     )
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -2311,14 +2349,18 @@ JSON_EXT = ".json"
 # Absolute path of the bundled JSON file, resolved relative to this module so
 # it works wherever Blender installs the add-on/extension.
 # Adjust the subfolder and file name to match the add-on's layout.
-BUNDLED_JSON_PATH = ADDON_TEMP_FILES / "My Player Character.json"
+CHARACTER_JSON_PATH = ADDON_TEMP_FILES / "My Player Character.json"
 
 
 class EXPORT_OT_bundled_json(bpy.types.Operator, ExportHelper):
     """Copy the add-on's bundled JSON file to a chosen folder and file name"""
     
     bl_idname = "zgswtor.pcs_json_saver"  # Rename with the add-on's prefix if desired.
-    bl_label = "Export Bundled JSON"
+    bl_label = "Export Player Character as a JSON file"
+    bl_description = (
+        "Exports the last assembled Player Character as a JSON file, which\n"
+        "can be opened by the SWTOR IO Tools Add-on's JSON importer"
+    )
     bl_options = {'REGISTER'}  # No scene data is modified, so no UNDO needed.
 
     # --- ExportHelper configuration -------------------------------------
@@ -2337,14 +2379,14 @@ class EXPORT_OT_bundled_json(bpy.types.Operator, ExportHelper):
  
     @classmethod
     def poll(cls, context):
-        """Enable the operator only if the bundled source file exists."""
-        return BUNDLED_JSON_PATH.is_file()
+        """Enable the operator only if the file exists."""
+        return CHARACTER_JSON_PATH.is_file()
  
  
     def invoke(self, context, event):
         """Pre-fill the file browser with the bundled file's name, then open it."""
         if not self.filepath:
-            self.filepath = BUNDLED_JSON_PATH.name
+            self.filepath = CHARACTER_JSON_PATH.name
         return super().invoke(context, event)
  
  
@@ -2358,14 +2400,14 @@ class EXPORT_OT_bundled_json(bpy.types.Operator, ExportHelper):
         )
  
         # Refuse to copy a file onto itself (shutil.SameFileError otherwise).
-        if destination.resolve() == BUNDLED_JSON_PATH.resolve():
+        if destination.resolve() == CHARACTER_JSON_PATH.resolve():
             self.report({'ERROR'}, "Destination is the bundled file itself")
             return {'CANCELLED'}
  
         try:
             # Create missing intermediate folders, then copy contents.
             destination.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(BUNDLED_JSON_PATH, destination)
+            shutil.copyfile(CHARACTER_JSON_PATH, destination)
         except OSError as exc:  # Permissions, disk full, invalid path, etc.
             self.report({'ERROR'}, f"Could not copy file: {exc}")
             return {'CANCELLED'}
@@ -2399,7 +2441,7 @@ def register():
     global _SWTOR_DATA
     
     if not _SWTOR_DATA:
-        load_bundled_swtor_data()
+        load_swtor_bundled_data()
     
     for cls in classes:
         bpy.utils.register_class(cls)
@@ -2411,16 +2453,16 @@ def register():
     bpy.types.Scene.zgswtor_pcs_interactive_mode = BoolProperty(
         name="Interactive Mode",
         description=(
-        "In Interactive Mode the character is regenerated\nat every change in their settings.\n"
-        "It can be fairly slow"
+        "In Interactive Mode the character is regenerated at every settings change\n"
+        "instead of waiting for clicking on the 'Assemble' button for confirmation"
         ),
         default=False,
         update=sliders_values_limiter,
     )
     
     bpy.types.Scene.zgswtor_pcs_legacy_mode = BoolProperty(
-        name="Legacy Assets Mode",
-        description="Use assets from before SWTOR Game Update XX's characters modernization",
+        name="Legacy Materials Mode",
+        description="Use materials from before SWTOR Game Update 7.6's characters modernization",
         default=False,
         update=node_data_and_sliders_labels_updater,
     )

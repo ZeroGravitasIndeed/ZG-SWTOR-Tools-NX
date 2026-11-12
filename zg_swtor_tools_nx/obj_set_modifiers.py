@@ -289,7 +289,7 @@ class ZGSWTOR_OT_set_modifiers(bpy.types.Operator):
 
             # Checking if we have a SWTOR IO Tools add-on with scaling parameters
             checks = requirements_checks()
-            if checks["swIOt"] == True:
+            if checks["swtor_io_tools"] == True:
                 if context.preferences.addons["swtor_io_tools"].preferences.gr2_scale_object:
                     gr2_scale = context.preferences.addons["swtor_io_tools"].preferences.gr2_scale_factor
                 else:

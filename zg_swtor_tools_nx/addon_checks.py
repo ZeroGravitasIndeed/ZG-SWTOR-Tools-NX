@@ -31,31 +31,32 @@ def requirements_checks():
 
 
     # -----------------------------
-    # .gr2 Add-on checks
+    # SWTOR IO Tools Add-on checks
+    is_installed = any( mod.__name__ == "swtor_io_tools" for mod in addon_utils.modules(refresh=True) )
     
-    if "swtor_io_tools" not in bpy.context.preferences.addons:
-        checks["swIOt"] = False
-        checks["swIOt_status"] = "NOT INSTALLED"
-        checks["swIOt_status_verbose"] = "NOT INSTALLED. No .gr2 Importer Add-on is currently installed."
+    if not is_installed:
+        checks["swtor_io_tools"] = False
+        checks["swtor_io_tools_status"] = "NOT INSTALLED"
+        checks["swtor_io_tools_status_verbose"] = "NOT INSTALLED. SWTOR IO Tools Add-on isn't installed."
     else:
         # addon_utils.check() returns a tuple of bools:
         # (add-on is enabled by default, add-on is enabled right now).
         # It doesn't check for its existence, hence the previous conditional above.
         if addon_utils.check("swtor_io_tools")[1]:
-            checks["swIOt"] = True
-            checks["swIOt_status"] = "ENABLED"
-            checks["swIOt_status_verbose"] = "ENABLED. A .gr2 Importer Add-on is installed and enabled."
+            checks["swtor_io_tools"] = True
+            checks["swtor_io_tools_status"] = "ENABLED"
+            checks["swtor_io_tools_status_verbose"] = "ENABLED. SWTOR IO Tools Add-on is installed and enabled."
         else:
-            checks["swIOt"] = False
-            checks["swIOt_status"] = "DISABLED"
-            checks["swIOt_status_verbose"] = "DISABLED. A .gr2 Importer Add-on is installed, but still needs to be enabled."
+            checks["swtor_io_tools"] = False
+            checks["swtor_io_tools_status"] = "DISABLED"
+            checks["swtor_io_tools_status_verbose"] = "DISABLED. SWTOR IO Tools Add-on is installed, but still needs to be enabled."
 
 
 
     # -----------------------------
     # 'resources' folder checks
 
-    if checks["swIOt"] == False:
+    if checks["swtor_io_tools"] == False:
 
         checks["resources"] = False
         checks["resources_status"] = "NOT SET"
