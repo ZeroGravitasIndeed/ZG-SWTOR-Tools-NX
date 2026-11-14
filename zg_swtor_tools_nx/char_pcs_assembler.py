@@ -2323,16 +2323,10 @@ class ZGSWTOR_PCS_OT_assembler(Operator):
 # SAVE FILE OPERATOR
 # region ######################################################################
 
-"""Operator that copies a JSON file bundled with the add-on to a user-chosen location.
-
-Integration:
-    1. Place this code in the add-on (e.g. in operators.py).
-    2. Adjust BUNDLED_JSON_PATH to point at the bundled file.
-    3. Register EXPORT_OT_bundled_json (see register()/unregister() below, or add
-       the class to the add-on's existing registration list).
-    4. Invoke it from a menu/panel:
-           layout.operator(EXPORT_OT_bundled_json.bl_idname)
-           
+"""
+Operator that copies the JSON file created by the process_pcs_data() function
+to a user-chosen location, so that it can be used with the SWTOR IO Tools
+add-on's Import menu options directly.
            
 Requires:
 import shutil
@@ -2344,18 +2338,16 @@ from bpy_extras.io_utils import ExportHelper
 """
 
 # Required extension for the destination file.
-JSON_EXT = ".json"
+filename_ext = ".json"
 
-# Absolute path of the bundled JSON file, resolved relative to this module so
-# it works wherever Blender installs the add-on/extension.
-# Adjust the subfolder and file name to match the add-on's layout.
+# Absolute path of the JSON file
 CHARACTER_JSON_PATH = ADDON_TEMP_FILES / "My Player Character.json"
 
 
-class EXPORT_OT_bundled_json(bpy.types.Operator, ExportHelper):
-    """Copy the add-on's bundled JSON file to a chosen folder and file name"""
+class ZGSWTOR_PCS_OT_json_saver(bpy.types.Operator, ExportHelper):
+    """Copy the Player Character JSON file to a chosen filepath"""
     
-    bl_idname = "zgswtor.pcs_json_saver"  # Rename with the add-on's prefix if desired.
+    bl_idname = "zgswtor.pcs_json_saver"
     bl_label = "Export Player Character as a JSON file"
     bl_description = (
         "Exports the last assembled Player Character as a JSON file, which\n"
@@ -2364,13 +2356,14 @@ class EXPORT_OT_bundled_json(bpy.types.Operator, ExportHelper):
     bl_options = {'REGISTER'}  # No scene data is modified, so no UNDO needed.
 
     # --- ExportHelper configuration -------------------------------------
-    # Extension that ExportHelper appends automatically in the file browser
+    # Required extension for the destination file.
+    # ExportHelper will append it automatically in the file browser
     # when the user has not typed it.
-    filename_ext = JSON_EXT
+    filename_ext = ".json"
  
     # Restrict the file browser listing to JSON files.
     filter_glob: StringProperty(
-        default="*" + JSON_EXT,
+        default="*" + filename_ext,
         options={'HIDDEN'},
         maxlen=255,
     )
@@ -2396,7 +2389,7 @@ class EXPORT_OT_bundled_json(bpy.types.Operator, ExportHelper):
         # automatic handling was bypassed (e.g. operator called from a script).
         # case_sensitive=False keeps an existing ".JSON" untouched.
         destination = Path(
-            ensure_ext(bpy.path.abspath(self.filepath), JSON_EXT, case_sensitive=False)
+            ensure_ext(bpy.path.abspath(self.filepath), filename_ext, case_sensitive=False)
         )
  
         # Refuse to copy a file onto itself (shutil.SameFileError otherwise).
@@ -2432,7 +2425,7 @@ classes = (
     ZGSWTOR_PCS_Sliders_Labels,
     ZGSWTOR_PCS_Sliders_Limits,
     ZGSWTOR_PCS_OT_assembler,
-    EXPORT_OT_bundled_json,
+    ZGSWTOR_PCS_OT_json_saver,
 )
 
 
