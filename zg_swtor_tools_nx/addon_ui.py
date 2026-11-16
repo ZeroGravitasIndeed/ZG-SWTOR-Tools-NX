@@ -294,11 +294,16 @@ class ZGSWTOR_PT_character_tools(bpy.types.Panel):
         
         # Save as JSON button
         save_json_row = tool_section.row()
-        save_json_row.enabled = checks["swtor_io_tools"] and checks["resources"]
-        save_json_row.alert = not split.enabled
+        # save_json_row.enabled = checks["swtor_io_tools"] and checks["resources"]
+        # save_json_row.alert = not split.enabled
 
         save_json_row.operator("zgswtor.pcs_json_saver", text="Save as JSON file")
         save_json_row.enabled = checks["legacy_resources"]
+
+
+        # Armor gear menu tests
+        
+        
 
         # ------------------------
         # endregion

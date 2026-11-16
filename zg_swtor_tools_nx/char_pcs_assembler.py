@@ -2070,17 +2070,45 @@ def generate_character(self, context):
     process_pcs_data(self, context, ami_data, bodytype_code, fqn)
 
 
+
     # Delete previous results (collections and its objects)
     for coll in bpy.data.collections:
         if coll.name.startswith("My Player Character"):
             delete_collection_recursive(coll)
     purge = bpy.ops.outliner.orphans_purge(do_recursive=True)
         
+        
+        
     # Call SWTOR IO Tools's import_mesh.gr2_json()
     # to process the JSON data and assemble the character.
+
+    # We'll need to explicitly pass all parameters because the operator
+    # will use defaults otherwise instead of the SWTOR IO Tools' properties.
+    # We can read the properties' state in IO Tools' preferences.
+    swtor_io_tools_prefs = bpy.context.preferences.addons["swtor_io_tools"].preferences
+
     try:
         paths_json_filepath = f"{ADDON_TEMP_FILES}/My Player Character.json"
-        result = bpy.ops.import_mesh.gr2_json(filepath = paths_json_filepath, prefer_legacy_materials = context.scene.zgswtor_pcs_legacy_mode)
+        
+        result = bpy.ops.import_mesh.gr2_json(
+            # These ones are determined by us
+            filepath = paths_json_filepath,
+            prefer_legacy_materials              = context.scene.zgswtor_pcs_legacy_mode,
+            ignore_mat_dds_paths                 = False,
+            correct_twilek_eyes_uv               = False,  # This one we need to think about
+            separate_eyes                        = False,  # We need to expose these
+            separate_each_eye                    = False,  # We need to expose these
+            job_results_rich                     = False,
+            job_results_accumulate               = True,
+            enforce_neutral_settings             = False,
+
+            # and these ones we read from the SWTOR IO Tools' preferences
+            append_character_name_to_collections = getattr(swtor_io_tools_prefs, 'gr2_append_character_name_to_collections_default'),
+            # npc_uses_skin                        = getattr(swtor_io_tools_prefs, 'npc_uses_skin'),
+            import_skeleton                      = getattr(swtor_io_tools_prefs, 'gr2_import_skeleton_default'),
+            bind_to_skeleton                     = getattr(swtor_io_tools_prefs, 'gr2_bind_to_skeleton_default'),
+            )
+        
         print(result)
         if result == {"CANCELLED"}:
             print(f"\n\nWARNING: SWTOR IO Tools Add-on failed to import {paths_json_filepath}\n\n")
