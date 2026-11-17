@@ -34,6 +34,10 @@ from .addon_checks import requirements_checks
 ADDON_RESOURCES  = Path(__file__).resolve().parent / "addon_resources"
 ADDON_TEMP_FILES = Path(__file__).resolve().parent / "addon_temp_files"
 
+# For passing objects that could have associated .clo files
+clo_heads = []
+clo_hairs = []
+
 # Holder for loaded SWTOR data resources stored in this add-on's subfolders.
 _SWTOR_DATA = {}
 
@@ -874,6 +878,12 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
                 attachment_path = [attachment.get("filename")]
                 head_models += attachment_path
     head_models = [process_wildcards(item, bodytype_code) for item in head_models]
+    
+    # heads can have associated .clo files (technically there's a single head object for PCs in underwear).
+    # CHECK WHETHER LISTING TO MAKE IT A DIFFERENT LIST IS NECESSARY OR NOT
+    global clo_heads
+    clo_heads = list(head_models)
+
 
 
     # -------------------------------
@@ -1041,6 +1051,10 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
                     hair_attachment_path = [hair_attachment.get("filename")]
                     hair_models += hair_attachment_path
         hair_models = [process_wildcards(item, bodytype_code) for item in hair_models]
+        
+        # hairs can have associated .clo files
+        global clo_hairs
+        clo_hairs = hair_models
 
 
         # -------------------------------
@@ -2129,10 +2143,68 @@ def generate_character(self, context):
         bpy.context.window.cursor_set("DEFAULT")  # Show normal cursor icon
         return {"CANCELLED"}
 
+
+    if getattr(swtor_io_tools_prefs, 'gr2_import_skeleton_default'):
+        add_clo_bones(self, context)
+    
     bpy.ops.object.select_all(action='DESELECT')
     
     
     
+
+    
+    
+    
+
+# -----------------------------------------------------------------------------
+# Add .clo bones
+# -----------------------------------------------------------------------------
+
+def add_clo_bones(self, context):
+    
+    if not clo_heads and not clo_hairs:
+        return    
+    
+    # Determine .clo files to use.
+    swtor_io_tools_prefs = bpy.context.preferences.addons["swtor_io_tools"].preferences
+    swtor_resources_dir = getattr(swtor_io_tools_prefs, "swtor_resources_dir")
+    
+    clo_filepaths = []
+
+    for clo_head in clo_heads:
+        clo_head_filepath = os.path.join(swtor_resources_dir, f"{clo_head[1:-4]}.clo")
+        if os.path.isfile(clo_head_filepath):
+            clo_filepaths += [clo_head_filepath]
+        
+    for clo_hair in clo_hairs:
+        clo_hair_filepath = os.path.join(swtor_resources_dir, f"{clo_hair[1:-4]}.clo")
+        if os.path.isfile(clo_hair_filepath):
+            clo_filepaths += [clo_hair_filepath]
+
+    if not clo_filepaths:
+        return
+    
+    
+    # Detect skeleton in My Player Character's collection.
+    pc_coll = bpy.data.collections.get('My Player Character')
+    if not pc_coll:
+        return
+    
+    skeleton = ""
+    for obj in pc_coll.objects:
+        if "_skeleton" in obj.name:
+            skeleton = obj.name
+            break    
+    if skeleton == None:
+        return
+    
+    
+    for clo_filepath in set(clo_filepaths):  # set() gets rid of possible duplicates
+        result = bpy.ops.import_cloth.clo(filepath=clo_filepath, armature_name=skeleton)
+    
+
+    
+
 
 # -----------------------------------------------------------------------------
 # Some properties updater functions
@@ -2463,6 +2535,7 @@ def register():
     
     if not _SWTOR_DATA:
         load_swtor_bundled_data()
+
     
     for cls in classes:
         bpy.utils.register_class(cls)
