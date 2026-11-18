@@ -19,9 +19,10 @@ Y_SCALING_SPACER = 0.6
 
 
 
-# ---------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Addon Status Tab
-# ---------------------------------------------------------------
+# ----------------------------------------------------------------------------
+
 class ZGSWTOR_PT_status_3dview(bpy.types.Panel):
     
     bl_space_type = "VIEW_3D"
@@ -69,9 +70,8 @@ class ZGSWTOR_PT_status_3dview(bpy.types.Panel):
                         
             tool_section_info = layout.column(align=True)
             tool_section_info.scale_y = Y_SCALING_INFO
-            tool_section_info.label(text="Tools showing up in red below need")
-            tool_section_info.label(text="to satisfy certain requirements")
-            tool_section_info.label(text="(more info in their tooltips).")
+            tool_section_info.label(text="Check tools in red's tooltips for info")
+            tool_section_info.label(text="on any missing requirements.")
             
         
         # tool_section_iotoolspref.operator("zgswtor.open_gr2_addon_preferences", text="SWTOR I/O Tools Add-on's Prefs")        
@@ -88,15 +88,22 @@ class ZGSWTOR_PT_status_3dview(bpy.types.Panel):
                 gr2_addon_prefs = bpy.context.preferences.addons["swtor_io_tools"].preferences
 
                 tool_section_iotoolspref.scale_y = Y_SCALING_GRAL
-                tool_section_iotoolspref.label(text=".gr2 Models Import / Handling Settings:")
-                split_row = tool_section_iotoolspref.split(factor=0.5)
+                # tool_section_iotoolspref.label(text=".gr2 Models Import / Handling Settings:")
+                split_row = tool_section_iotoolspref.split(factor=0.53)
                 col1 = split_row.column()
                 col2 = split_row.column()
-                col1.prop(gr2_addon_prefs,"gr2_scale_object", text="Scale By",)
+                col1.prop(gr2_addon_prefs,"gr2_scale_object", text="Scale By")
                 col2.prop(gr2_addon_prefs,"gr2_scale_factor", text="")
                 col2.enabled = gr2_addon_prefs.gr2_scale_object
 
                 tool_section_iotoolspref.prop(gr2_addon_prefs,"gr2_apply_axis_conversion")
+                
+                split_row = tool_section_iotoolspref.split(factor=0.53, align=True)
+                col1 = split_row.column()
+                col2 = split_row.column()
+                col1.prop(gr2_addon_prefs,"gr2_import_skeleton_default", text="Import Skeletons")
+                col2.prop(gr2_addon_prefs,"gr2_bind_to_skeleton_default", text="Bind To Them")
+
             
 
 
@@ -113,15 +120,18 @@ class ZGSWTOR_PT_status_3dview(bpy.types.Panel):
 
 
 
-# ---------------------------------------------------------------
-# Character Tools Tab
-# ---------------------------------------------------------------
 
-class ZGSWTOR_PT_character_tools(bpy.types.Panel):
+
+
+# ----------------------------------------------------------------------------
+# Character Tools Tab
+# ----------------------------------------------------------------------------
+
+class ZGSWTOR_PT_character_assembler(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "ZG SWTOR"
-    bl_label = "SWTOR Character Tools"
+    bl_label = "SWTOR Character Assembler"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
@@ -132,35 +142,6 @@ class ZGSWTOR_PT_character_tools(bpy.types.Panel):
         layout.scale_y = Y_SCALING_GRAL
 
 
-
-
-        # Pose Position / Reset Position UI
-        # region
-        # ------------------------
-        # (this one is fully defined here, without
-        # calling any Add-on operators)
-        tool_section = layout.box().column(align=True)
-        tool_section.label(text="ARMATURES IN SCENE")
-        tool_section.separator(type="LINE")
-        if context.scene.objects:
-            armature_col = tool_section.column(align=True)
-            armatures = []
-            for obj in context.scene.objects:
-                if obj.type == "ARMATURE":
-                    armatures.append(obj)
-                    tool_section.separator(factor=Y_SCALING_SPACER)
-                    armature_col = tool_section.column(align=True)
-                    armature_col.label(text=obj.name)
-                    armature_buttons = armature_col.row(align=True)
-                    armature_buttons.prop(obj.data, "pose_position", expand=True)
-            if not armatures:
-                armature_col.label(text="      No armatures present.")
-        # ------------------------
-        # endregion
-
-
-        tool_separator = layout.column()
-        tool_separator.separator()
 
 
         # pcs_assembler UI
@@ -300,26 +281,21 @@ class ZGSWTOR_PT_character_tools(bpy.types.Panel):
         save_json_row.operator("zgswtor.pcs_json_saver", text="Save as JSON file")
         save_json_row.enabled = checks["legacy_resources"]
 
-
-        # Armor gear menu tests
-        
-        
-
         # ------------------------
         # endregion
 
 
-        tool_separator = layout.column()
-        tool_separator.separator()
+        # tool_separator = layout.column()
+        # tool_separator.separator()
 
 
-        # clear_bone_translations UI
-        # region
-        # ------------------------
-        tool_section = layout.box().column(align=True)
-        tool_section.operator("zgswtor.clear_bone_translations", text="Clear Bones' Translations")
-        # ------------------------
-        # endregion
+        # # clear_bone_translations UI
+        # # region
+        # # ------------------------
+        # tool_section = layout.box().column(align=True)
+        # tool_section.operator("zgswtor.clear_bone_translations", text="Clear Bones' Translations")
+        # # ------------------------
+        # # endregion
 
 
         tool_separator = layout.column()
@@ -342,6 +318,58 @@ class ZGSWTOR_PT_character_tools(bpy.types.Panel):
         col.operator("zgswtor.prefixer", text="Prefix Selected Items")
         col.prop(context.scene, "zgswtor_CP_prefix", text = "Prefix")
         col.prop(context.scene, "zgswtor_CP_prefix_mats_skeletons", text="Materials & Skeletons Too")
+        # ------------------------
+        # endregion
+
+
+
+
+
+
+
+
+# ----------------------------------------------------------------------------
+# Character Tools Tab
+# ----------------------------------------------------------------------------
+
+class ZGSWTOR_PT_character_tools(bpy.types.Panel):
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "ZG SWTOR"
+    bl_label = "SWTOR Character Tools"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+
+        checks = requirements_checks()        
+
+        layout = self.layout
+        layout.scale_y = Y_SCALING_GRAL
+
+
+
+        # Pose Position / Reset Position UI
+        # region
+        # ------------------------
+        # (this one is fully defined here, without
+        # calling any Add-on operators)
+        tool_section = layout.box().column(align=True)
+        tool_section.label(text="ARMATURES IN SCENE")
+        tool_section.separator(type="LINE")
+        if context.scene.objects:
+            armature_col = tool_section.column(align=True)
+            armatures = []
+            for obj in context.scene.objects:
+                if obj.type == "ARMATURE":
+                    armatures.append(obj)
+                    tool_section.separator(factor=Y_SCALING_SPACER)
+                    armature_col = tool_section.column(align=True)
+                    armature_col.label(text=obj.name)
+                    armature_buttons = armature_col.row(align=True)
+                    armature_buttons.prop(obj.data, "pose_position", expand=True)
+            if not armatures:
+                armature_col.label(text="      No armatures present.")
+
         # ------------------------
         # endregion
 
@@ -382,9 +410,12 @@ class ZGSWTOR_PT_character_tools(bpy.types.Panel):
 
 
 
-# ---------------------------------------------------------------
+
+
+
+# ----------------------------------------------------------------------------
 # Objects Tools Tab
-# ---------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 class ZGSWTOR_PT_objects_tools(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
@@ -405,7 +436,8 @@ class ZGSWTOR_PT_objects_tools(bpy.types.Panel):
         # region
         # ------------------------
         tool_section = layout.box().column(align=False)
-        row = tool_section.row(align=True).label(text="QuickScale Selected Objects")
+        row = tool_section.row(align=True).label(text="QUICKSCALE SELECTED OBJECTS")
+        
         row = tool_section.row(align=True)
         row.operator("zgswtor.quickscale", text="Down").action = "DOWNSCALE"
         in_row = row.row()
@@ -416,8 +448,8 @@ class ZGSWTOR_PT_objects_tools(bpy.types.Panel):
         # endregion
 
 
-        tool_separator = layout.column()
-        tool_separator.separator()
+        tool_section.separator(type="LINE")
+
 
 
         # Apply Transforms UI
@@ -437,8 +469,6 @@ class ZGSWTOR_PT_objects_tools(bpy.types.Panel):
         col2 = split.column(align=True)
         col2.operator("zgswtor.apply_transforms", text="Pos.").action = 'LOCATION'
         col2.operator("zgswtor.apply_transforms", text="ALL").action = 'ALL'
-        # ------------------------
-        # endregion
 
 
         # tool_separator = layout.column()
@@ -446,7 +476,7 @@ class ZGSWTOR_PT_objects_tools(bpy.types.Panel):
 
 
         row = tool_section.row(align=True)
-        row.prop(context.scene, "zgswtor_OAT_set_custom_props", text="Annotate Objs.")
+        row.prop(context.scene, "zgswtor_OAT_set_custom_props", text="Annotate Objects")
 
 
         # Show the active object's transforms data as a representative
@@ -455,11 +485,12 @@ class ZGSWTOR_PT_objects_tools(bpy.types.Panel):
         # (completely implemented here, no operators called).
         selected_obj = context.object
         
+        tool_section.separator(type="LINE")
         col=tool_section.column(align=True)
         col.scale_y = Y_SCALING_INFO
         if selected_obj:
             col.separator()
-            col.label(text="Active Obj. Data (represent.):")
+            col.label(text="Active Object's Notes (representative):")
             
             row = col.row(align=True)
             row.enabled = False
@@ -490,10 +521,15 @@ class ZGSWTOR_PT_objects_tools(bpy.types.Panel):
                 col.label(text="No gr2_scale info.")
         else:
             pass
+        
+        # ------------------------
+        # endregion
+
 
 
         tool_separator = layout.column()
         tool_separator.separator()
+
 
 
         # remove_doubles UI
@@ -502,7 +538,7 @@ class ZGSWTOR_PT_objects_tools(bpy.types.Panel):
         tool_section = layout.box()
         
         col=tool_section.column(align=False)
-        col.label(text="Merge Double Vertices")
+        col.label(text="MERGE DOUBLE VERTICES")
         
         split = col.split(factor= 0.7, align=True)
         col_left, col_right = split.column(align=True), split.column(align=True)
@@ -545,36 +581,8 @@ class ZGSWTOR_PT_objects_tools(bpy.types.Panel):
         # endregion
 
 
-
-
-        # clear_splitnormals_layers UI
-        # region
-        # ------------------------
-        # tool_section = layout.box()
-        # col=tool_section.column(align=False)
-        # col.label(text="Clear Split Normals Layers")
-        
-        # split = col.split(factor= 0.7, align=True)
-        # col_left, col_right = split.column(align=True), split.column(align=True)
-
-        # clear_spl_normals = col_left.operator("zgswtor.clear_splitnormals_layers", text="Selected Objects")
-        # col_left.enabled = len(bpy.context.selected_objects) != 0
-        # clear_spl_normals.use_selection_only = True
-
-        # clear_spl_normals = col_right.operator("zgswtor.clear_splitnormals_layers", text="All")
-        # col_right.enabled = len(bpy.data.objects) != 0
-        # clear_spl_normals.use_selection_only = False
-
-                
-        # tris_to_quads = col.operator("mesh.tris_convert_to_quads", text="Tris to Quads (Comparing)")
-        # tris_to_quads.uvs = True
-        # tris_to_quads.materials = True
-        # ------------------------
-        # endregion
-
-
-        tool_separator = layout.column()
-        tool_separator.separator()
+        # tool_separator = layout.column()
+        # tool_separator.separator()
 
 
         # set_modifiers UI
@@ -582,7 +590,8 @@ class ZGSWTOR_PT_objects_tools(bpy.types.Panel):
         # ------------------------
         tool_section = layout.box()
         col=tool_section.column(align=False)
-        col.label(text="Add Modifiers To Selection")
+        col.label(text="ADD MODIFIERS TO SELECTION")
+        
         grid = col.grid_flow(row_major=True, columns=2, align=True)
         grid.operator("zgswtor.set_modifiers", text="SubD").action = "add_subd"
         grid.operator("zgswtor.set_modifiers", text="Multires").action = "add_multires"
@@ -626,9 +635,9 @@ class ZGSWTOR_PT_objects_tools(bpy.types.Panel):
         # ------------------------
         tool_section = layout.box()
 
-        col=tool_section.column(align=True)
+        col=tool_section.column(align=False)
         
-        col.label(text="Set Obj. Properties Manually")
+        col.label(text="SET SCALE / AXIS PROPS MANUALLY")
         split = col.split(factor= 0.7, align=True)
         col_left, col_right = split.column(align=True), split.column(align=True)
 
@@ -690,9 +699,13 @@ class ZGSWTOR_PT_objects_tools(bpy.types.Panel):
 
 
 
-# ---------------------------------------------------------------
+
+
+
+# ----------------------------------------------------------------------------
 # Area Tools Tab
-# ---------------------------------------------------------------
+# ----------------------------------------------------------------------------
+
 class ZGSWTOR_PT_area_tools(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
@@ -710,39 +723,12 @@ class ZGSWTOR_PT_area_tools(bpy.types.Panel):
 
 
 
-        # exclude_all_collections UI
-        # region
-        # ------------------------
-        # tool_section = layout.box().column(align=False)
-        # tool_section.label(text="Outliner Collections' Visibility")
-
-        # split = tool_section.split(factor= 0.75, align=True)
-        # col_left, col_right = split.column(align=True).row(align=True), split.column(align=True).row(align=True)
-        # disable_all = col_left.operator("zgswtor.exclude_include_collections", text="Disable Selected")
-        # disable_all.action = "DISABLE_SEL"
-        # disable_sel = col_right.operator("zgswtor.exclude_include_collections", text="All")
-        # disable_sel.action = "DISABLE_ALL"
-        
-        # split = tool_section.split(factor= 0.75, align=True)
-        # col_left, col_right = split.column(align=True).row(align=True), split.column(align=True).row(align=True)
-        # disable_all = col_left.operator("zgswtor.exclude_include_collections", text="Enable Selected")
-        # disable_all.action = "ENABLE_SEL"
-        # disable_sel = col_right.operator("zgswtor.exclude_include_collections", text="All")
-        # disable_sel.action = "ENABLE_ALL"
-
-        # tool_section.prop(context.scene, "zgswtor_CEI_recursive", text="Include Their Offspring")
-        # ------------------------
-        # endregion
-
-
-
-
         # group_collections UI
         # region
         # ------------------------
         tool_section = layout.box().column(align=False)
         
-        tool_section.label(text="Group Areas' Collections")
+        tool_section.label(text="GROUP COLLECTIONS OF AREAS")
         
         split = tool_section.split(factor= 0.75, align=True)
         col_left, col_right = split.column(align=True).row(align=True), split.column(align=True).row(align=True)
@@ -765,11 +751,44 @@ class ZGSWTOR_PT_area_tools(bpy.types.Panel):
         # endregion
 
 
+        tool_separator = layout.column()
+        tool_separator.separator()
 
 
-# ---------------------------------------------------------------
+        # exclude_all_collections UI
+        # region
+        # ------------------------
+        tool_section = layout.box().column(align=False)
+        tool_section.label(text="Outliner Collections' Visibility")
+
+        split = tool_section.split(factor= 0.75, align=True)
+        col_left, col_right = split.column(align=True).row(align=True), split.column(align=True).row(align=True)
+        disable_all = col_left.operator("zgswtor.exclude_include_collections", text="Disable Selected")
+        disable_all.action = "DISABLE_SEL"
+        disable_sel = col_right.operator("zgswtor.exclude_include_collections", text="All")
+        disable_sel.action = "DISABLE_ALL"
+        
+        split = tool_section.split(factor= 0.75, align=True)
+        col_left, col_right = split.column(align=True).row(align=True), split.column(align=True).row(align=True)
+        disable_all = col_left.operator("zgswtor.exclude_include_collections", text="Enable Selected")
+        disable_all.action = "ENABLE_SEL"
+        disable_sel = col_right.operator("zgswtor.exclude_include_collections", text="All")
+        disable_sel.action = "ENABLE_ALL"
+
+        tool_section.prop(context.scene, "zgswtor_CEI_recursive", text="Include Their Offspring")
+        # ------------------------
+        # endregion
+
+
+
+
+
+
+
+
+# ----------------------------------------------------------------------------
 # Materials Tools Tab
-# ---------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 class ZGSWTOR_PT_materials_tools(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
@@ -980,9 +999,14 @@ class ZGSWTOR_PT_materials_tools(bpy.types.Panel):
 
 
 
-# ---------------------------------------------------------------
+
+
+
+
+
+# ----------------------------------------------------------------------------
 # Baking Tools Tab
-# ---------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 class ZGSWTOR_PT_baking_tools(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
@@ -1045,9 +1069,9 @@ class ZGSWTOR_PT_baking_tools(bpy.types.Panel):
 
 
 
-# ---------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Addon Status Tab
-# ---------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 class ZGSWTOR_PT_status_node_editor(bpy.types.Panel):
     
@@ -1113,9 +1137,9 @@ class ZGSWTOR_PT_status_node_editor(bpy.types.Panel):
 
 
 
-# ---------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # SWTOR Shader Editor Tools Tab
-# ---------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 # class ZGSWTOR_PT_shader_tools(bpy.types.Panel):
 #     bl_space_type = "NODE_EDITOR"
@@ -1198,7 +1222,7 @@ class ZGSWTOR_PT_status_node_editor(bpy.types.Panel):
 #         # ------------------------
 #         # endregion
 
-# # endregion
+# endregion
 
 
 
@@ -1210,6 +1234,7 @@ class ZGSWTOR_PT_status_node_editor(bpy.types.Panel):
 
 classes = [
     ZGSWTOR_PT_status_3dview,
+    ZGSWTOR_PT_character_assembler,
     ZGSWTOR_PT_character_tools,
     ZGSWTOR_PT_objects_tools,
     ZGSWTOR_PT_materials_tools,

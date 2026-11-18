@@ -66,36 +66,36 @@ class addonPreferences(bpy.types.AddonPreferences):
 
 
         # resources folderpath preferences UI
-        pref_box = layout.box()
+        # pref_box = layout.box()
         
-        col=pref_box.column(align=True)
-        col.scale_y = Y_SCALING_INFO
-        col.label(text="Path to the 'resources' folder in a SWTOR assets extraction")
-        col.label(text="produced by the Slicers GUI app, EasyMYP, or any similar tool.")
+        # col=pref_box.column(align=True)
+        # col.scale_y = Y_SCALING_INFO
+        # col.label(text="Path to the 'resources' folder in a SWTOR assets extraction")
+        # col.label(text="produced by the Slicers GUI app, EasyMYP, or any similar tool.")
 
-        col=pref_box.column()
-        col.prop(self, 'swtor_resources_dir', expand=True, )
+        # col=pref_box.column()
+        # col.prop(self, 'swtor_resources_dir', expand=True, )
         
-        col.alert = not checks["resources"]
-        col.label(text="Status: " + checks["resources_status_verbose"])
+        # col.alert = not checks["resources"]
+        # col.label(text="Status: " + checks["resources_status_verbose"])
 
 
 
         # Custom SWTOR shaders blendfile folderpath UI
-        pref_box = layout.box()
+        # pref_box = layout.box()
         
-        col=pref_box.column(align=True)
-        col.scale_y = Y_SCALING_INFO
-        col.label(text="Path to a .blend file holding customizable replacement SWTOR shaders. By default,")
-        col.label(text="it uses the one stored inside this Add-on. A path to a different one can be set here.")
+        # col=pref_box.column(align=True)
+        # col.scale_y = Y_SCALING_INFO
+        # col.label(text="Path to a .blend file holding customizable replacement SWTOR shaders. By default,")
+        # col.label(text="it uses the one stored inside this Add-on. A path to a different one can be set here.")
         
-        col=pref_box.column()
-        col.prop(self, 'swtor_custom_shaders_blendfile_path', expand=True, )
+        # col=pref_box.column()
+        # col.prop(self, 'swtor_custom_shaders_blendfile_path', expand=True, )
         
-        col.alert = not checks["custom_shaders"]
-        col.label(text="Status: " + checks["custom_shaders_status_verbose"])
+        # col.alert = not checks["custom_shaders"]
+        # col.label(text="Status: " + checks["custom_shaders_status_verbose"])
 
-        col.operator("zgswtor.reset_custom_shaders_prefs_to_internal", text="Reset to internal Custom Shaders file")
+        # col.operator("zgswtor.reset_custom_shaders_prefs_to_internal", text="Reset to internal Custom Shaders file")
 
 
 
@@ -136,7 +136,7 @@ class ZGSWTOR_OT_reset_custom_shaders_prefs_to_internal(bpy.types.Operator):
 
 
 
-# Open new Preferences window aux function
+# Open new Preferences window aux function NOT IN USE
 def blender_prefs_with_custom_size(pref_window_width,  pref_window_height):
     # based on code by "Rombout Versluijs, Pan Beep (Beep) https://github.com/schroef.
     # See:
@@ -171,8 +171,9 @@ def blender_prefs_with_custom_size(pref_window_width,  pref_window_height):
     render.resolution_x = orgResX
     render.resolution_y = orgResY
 
+
 # Operator to open the ZG SWTOR Tools' preferences window,
-# called by addon_ui's status panel.
+# called by addon_ui's status panel. NOT IN USE
 class ZGSWTOR_OT_open_zg_preferences(Operator):
     bl_idname = "zgswtor.open_zg_addon_preferences"
     bl_label = "ZG Open ZG SWTOR Tools Add-on's Preferences"
@@ -196,8 +197,12 @@ class ZGSWTOR_OT_open_gr2_preferences(Operator):
     def execute(self, context):
         # bpy.ops.screen.userpref_show(section="ADDONS")
         
-        blender_prefs_with_custom_size(640, 512)
+        # blender_prefs_with_custom_size(640, 512)  # discarded. We go now tih the normal prefs window
+        # bpy.ops.screen.userpref_show(section='ADDONS',)
+        
+        # Open prefs window
         bpy.ops.preferences.addon_show(module="swtor_io_tools")
+
         return {'FINISHED'}
 
 
