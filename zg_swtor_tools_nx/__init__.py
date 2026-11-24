@@ -7,7 +7,7 @@ import importlib
 bl_info = {
     "name": "ZG SWTOR Tools NX",
     "author": "ZeroGravitas",
-    "version": (0, 1, 3),
+    "version": (0, 1, 4),
     "blender": (3, 6, 23),
     "category": "SWTOR",
     "location": "View 3D > Sidebar > ZG SWTOR",
@@ -26,9 +26,10 @@ modulesNames = [
     'addon_preferences',
     'addon_ui',
 
-    'char_pcs_assembler',
+    'char_pcs_designer',
     'char_character_prefixer',
     'char_merge_phys_vertex_groups',
+    # 'char_armor_builder'
 
     'obj_apply_transforms',
     'obj_set_swtor_obj_custom_props',

@@ -1,11 +1,14 @@
 import bpy
 import addon_utils
+from pathlib import Path
 
 from .addon_checks import requirements_checks
 
 
-ADDON_ROOT = __file__.rsplit(__name__.rsplit(".")[0])[0] + __name__.rsplit(".")[0]
-
+ADDON_FOLDER     = Path(__file__).resolve().parent
+ADDON_TEMP_FILES = ADDON_FOLDER / "addon_temp_files"
+CHARACTER_JSON_PATH = ADDON_TEMP_FILES / "My Player Character.json"
+        
 Y_SCALING_GRAL = 0.9
 Y_SCALING_INFO = 0.75
 Y_SCALING_SPACER = 0.6
@@ -56,7 +59,8 @@ class ZGSWTOR_PT_status_3dview(bpy.types.Panel):
 
         tool_section_zgstatus.alert = not checks["legacy_resources"]
         tool_section_zgstatus.label(text="• SWTOR Legacy 'resources': " + checks["legacy_resources_status"])
-
+        
+        
         # tool_section_zgstatus.alert = not checks["custom_shaders"]
         # tool_section_zgstatus.label(text="• ZG Custom Shaders: " + checks["custom_shaders_status"])
         
@@ -124,14 +128,14 @@ class ZGSWTOR_PT_status_3dview(bpy.types.Panel):
 
 
 # ----------------------------------------------------------------------------
-# Character Tools Tab
+# region CHARACTER TOOLS TAB
 # ----------------------------------------------------------------------------
 
-class ZGSWTOR_PT_character_assembler(bpy.types.Panel):
+class ZGSWTOR_PT_character_designer(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "ZG SWTOR"
-    bl_label = "SWTOR Character Assembler"
+    bl_label = "SWTOR Character Designer"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
@@ -144,8 +148,7 @@ class ZGSWTOR_PT_character_assembler(bpy.types.Panel):
 
 
 
-        # pcs_assembler UI
-        # region
+        # region pcs_designer UI
         # ------------------------
         tool_section = layout.box()
         
@@ -166,10 +169,10 @@ class ZGSWTOR_PT_character_assembler(bpy.types.Panel):
         sliders_limits = context.scene.zgswtor_pcs_sliders_limits
 
         heading = tool_section.column()
-        heading.label(text="PLAYER CHARACTER ASSEMBLER")
+        heading.label(text="PLAYER CHARACTER DESIGNER")
 
         
-        tool_section.separator(type="LINE")
+        tool_section.separator(type="LINE", factor=0.4)
 
 
         # MENUS BLOCK
@@ -191,7 +194,7 @@ class ZGSWTOR_PT_character_assembler(bpy.types.Panel):
         split_col.prop(sliders, "pcs_species", text="")
         # split_col.prop(sliders, "pcs_bodytype", text="")
 
-        tool_section.separator(type="LINE")
+        tool_section.separator(type="LINE", factor=0.4)
 
 
         # SLIDERS BLOCK
@@ -201,12 +204,14 @@ class ZGSWTOR_PT_character_assembler(bpy.types.Panel):
         fields_width_px = 110  # Desired width
         labels_width_fac = (1 - (fields_width_px / sidebar_width_px) )
         split=tool_section.split(factor=labels_width_fac)
+        
         split.enabled = checks["swtor_io_tools"] and checks["resources"]
         split.alert = not split.enabled
 
         
         # Labels column.
         split_col=split.column()
+        
         split.enabled = checks["swtor_io_tools"] and checks["resources"]
         split.alert = not split.enabled
         
@@ -218,10 +223,20 @@ class ZGSWTOR_PT_character_assembler(bpy.types.Panel):
             if slider_label != "":
                 split_col.label(text=slider_label)
                 labels_count += 1
+
+        # Fill empty slider menu lines to keep
+        # the block's height constant and nice.
+        # We are doing 10 lines instead of 9
+        # to space Dark Side Corruption.
+        if labels_count < 10:
+            for l in range(10 - labels_count):
+                split_col.label(text="")
         
+        split_col.label(text="Dark Side Corruption")
+
         
         # Sliders column
-        split_col=split.column()
+        split_col=split.column(align=False)
         
         # Body Type is its own block because it isn't
         # in the _SLIDERS_NAMES list.
@@ -229,7 +244,9 @@ class ZGSWTOR_PT_character_assembler(bpy.types.Panel):
         split_col_row.prop(sliders, "pcs_bodytype", text="")
         split_col_row.label(text=" of 4")
 
+
         # Rest of sliders
+        split_col_row = split_col.row(align=False)
         for slider_name in _SLIDERS_NAMES:
             slider_label = getattr(sliders_labels, slider_name)
             slider_limit = getattr(sliders_limits, slider_name)
@@ -239,26 +256,26 @@ class ZGSWTOR_PT_character_assembler(bpy.types.Panel):
                 split_col_row.label(text=f" of {slider_limit}")
 
 
-        # Fill empty slider menu lines to keep
-        # the block's height constant and nice.
-        if labels_count < 9:
-            for l in range(9 - labels_count):
+        # Fill empty slider menu lines
+        if labels_count < 10:
+            for l in range(10 - labels_count):
                 split_col.label(text="")
+
+        
+        # Alignment is its own thing, too.
+        # We are putting it at the bottom.
+        split_col_row = split_col.row(align=True)
+        split_col_row.prop(sliders, "pcs_alignment", text="")
+        split_col_row.label(text="(0-5)")
 
 
         # CHECKBOXES AND BUTTONS BLOCK
 
-        # Legacy/Modern assets checkbox.
-        legacy_checkbox_row = tool_section.row()
-        legacy_checkbox_row.prop(context.scene, "zgswtor_pcs_legacy_mode", text="Use Legacy Materials")
-        legacy_checkbox_row.enabled = checks["legacy_resources"]
-        legacy_checkbox_row.alert = not checks["legacy_resources"]
+        tool_section.separator(type="LINE", factor=0.4)
 
-        tool_section.separator(type="LINE")
-                
-        split = tool_section.split(factor=labels_width_fac)
-        
         # Interactive Mode checkbox.
+        split = tool_section.split(factor=labels_width_fac)
+
         split_row = split.row()
         split_row.enabled = checks["swtor_io_tools"] and checks["resources"]
         split_row.alert = not split.enabled
@@ -267,10 +284,23 @@ class ZGSWTOR_PT_character_assembler(bpy.types.Panel):
         split_row.enabled = checks["swtor_io_tools"] and checks["resources"]
         split_row.alert = not split.enabled
 
+
+        # Legacy/Modern assets checkbox.
+
+        legacy_checkbox_col = tool_section.column(align=True)
+        legacy_checkbox_col.prop(context.scene, "zgswtor_pcs_mixed_legacy_mode"  , text="Use Legacy Textures")
+        legacy_checkbox_col.prop(context.scene, "zgswtor_pcs_full_legacy_mode", text="Full Legacy Characters Mode")
+        legacy_checkbox_col.enabled = checks["legacy_resources"]
+        legacy_checkbox_col.alert = not checks["legacy_resources"]
+
+        tool_section.separator(type="LINE", factor=0.4)
+                
+        
+
     
         # Assemble button bound to the operator; scale_y enlarges it.
         split_row = split.row()
-        split_row.operator("zgswtor.pcs_assembler", text="Assemble")
+        split_row.operator("zgswtor.pcs_designer", text="Assemble")
         split_row.enabled = not context.scene.zgswtor_pcs_interactive_mode
         
         # Save as JSON button
@@ -279,7 +309,8 @@ class ZGSWTOR_PT_character_assembler(bpy.types.Panel):
         # save_json_row.alert = not split.enabled
 
         save_json_row.operator("zgswtor.pcs_json_saver", text="Save as JSON file")
-        save_json_row.enabled = checks["legacy_resources"]
+        save_json_row.enabled = CHARACTER_JSON_PATH.is_file()
+
 
         # ------------------------
         # endregion
@@ -302,16 +333,15 @@ class ZGSWTOR_PT_character_assembler(bpy.types.Panel):
         tool_separator.separator()
 
 
-        # prefixer UI
-        # region
+        # region prefixer UI
         # ------------------------
         tool_section = layout.box()
         
         tool_section_info = tool_section.column(align=True)
         tool_section_info.scale_y = Y_SCALING_INFO
-        tool_section_info.label(text="CHARACTERS' ASSETS PREFIXER")
-        tool_section_info.separator(type="LINE")
-        tool_section_info.label(text="Acts on Objects, Materials, Skeleton, and")
+        tool_section_info.label(text="CHARACTER ASSETS PREFIXER")
+        tool_section_info.separator()
+        tool_section_info.label(text="Prefix Objects, Materials, Skeletons, and")
         tool_section_info.label(text="Collections too if selected from Outliner.")
         
         col=tool_section.column(align=False)
@@ -321,7 +351,7 @@ class ZGSWTOR_PT_character_assembler(bpy.types.Panel):
         # ------------------------
         # endregion
 
-
+    # endregion
 
 
 
@@ -1234,7 +1264,7 @@ class ZGSWTOR_PT_status_node_editor(bpy.types.Panel):
 
 classes = [
     ZGSWTOR_PT_status_3dview,
-    ZGSWTOR_PT_character_assembler,
+    ZGSWTOR_PT_character_designer,
     ZGSWTOR_PT_character_tools,
     ZGSWTOR_PT_objects_tools,
     ZGSWTOR_PT_materials_tools,

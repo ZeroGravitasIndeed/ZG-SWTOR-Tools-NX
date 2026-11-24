@@ -1,5 +1,5 @@
 """Searchable single-item selectors for a large, static list of items.
-
+# region
 Target: Blender 4.5 (uses ``UILayout.panel()``, available since 4.1).
 
 Data source
@@ -33,10 +33,14 @@ Packaging
 ---------
 As a Blender 4.5 extension, ship this file as ``__init__.py`` together with
 ``items.json`` and a ``blender_manifest.toml``.
+
+# endregion
 """
 
-import json
+import os
 from pathlib import Path
+
+import json
 
 import bpy
 from bpy.app.handlers import persistent
@@ -47,6 +51,141 @@ from bpy.props import (
     StringProperty,
 )
 from bpy.types import Operator, Panel, PropertyGroup, UIList
+
+from .addon_utils.python.gral import get_documents_dir
+
+
+
+
+# #############################################################################
+# SOME CONSTANTS
+# region ######################################################################
+
+ADDON_FOLDER = Path(__file__).resolve().parent
+
+# Add-on's folder for diverse auxilliary data (Jedipedia, PugTools, etc.).
+ADDON_RESOURCES  = Path(__file__).resolve().parent / "swtor_data"
+ADDON_TEMP_FILES = Path(__file__).resolve().parent / "addon_temp_files"
+
+ADDON_USER_RESOURCES = bpy.utils.user_resource('DATAFILES', path='', create=False)
+
+# endregion ###################################################################
+
+
+
+
+
+
+# #############################################################################
+# PROCESSING OF SWTOR DATA
+# region ######################################################################
+
+
+
+itm_nodes_folderpath = r"D:\SWTOR 3D\SLICER TOOLS\PUGTOOLS\PugTools data\Node Browser exports\JSON\itm_nodes"
+ipp_nodes_folderpath = r"D:\SWTOR 3D\SLICER TOOLS\PUGTOOLS\PugTools data\Node Browser exports\JSON\ipp_nodes"
+itm_stb_folderpath = r"D:\SWTOR 3D\SLICER TOOLS\PUGTOOLS\PugTools data\Node Browser exports\STBs a JSON\itm.stb.json"
+
+destination_folder = r"D:\PROGRAMACIÓN\BLENDER DEV\- ADDONS\ZG SWTOR Tools NX\ZG-SWTOR-Tools-NX\zg_swtor_tools_nx\addon_resources\processed_game_data"
+
+
+# Check for the existence of preprocessed game data
+
+
+itm_stb = read_json_file(itm_stb_folderpath)
+
+
+
+# PugTools' JSON exports are hierarchical instead of a flat folder.
+
+itm_armor_pieces = {}
+itm_armor_sets   = {}
+itm_names_to_fqn = {}
+
+itm_count   = 0
+armor_count = 0
+
+bad_filepath_substr = [
+    "/test/",
+    "/qa/",
+    "/testing/",
+]
+
+for root, dirs, files in os.walk(itm_nodes_folderpath + '/itm'):
+    for file in files:
+        filepath = os.path.join(root, file).replace('\\', '/')
+        
+        # Skip some obvious irrelevant entries
+        if any(substring in filepath for substring in bad_filepath_substr):
+            continue
+        
+        
+        json_data = read_json_file(filepath)
+        itm_count += 1
+
+        fqn = json_data['name']
+        
+        if 'itmAppearanceSpec' not in json_data['data']:
+            continue
+
+        armor_count += 1 
+        armor_data = {
+            'itmSlotTypes'                      : json_data['data'].get('itmSlotTypes'),
+            'itmAppearanceSpec'                 : json_data['data'].get('itmAppearanceSpec'),
+            'itmAppearanceSpecByPlayerClass'    : json_data['data'].get('itmAppearanceSpecByPlayerClass'),
+            'itmAppearanceSpecByPlayerClass'    : json_data['data'].get('itmAppearanceSpecByPlayerClass'),
+            'itmgenderRequired'                 : json_data['data'].get('itmgenderRequired'), # (1-Male, 2-Female, 3-none)
+            'itmIcon'                           : json_data['data'].get('itmIcon'),
+            'itmNameEncoded'                    : json_data['data'].get('itmNameEncoded'),
+        }
+
+        itm_armor_pieces[fqn] = armor_data
+        
+        ingame_name_id = armor_data['itmNameEncoded'].split('#')[1]
+        ingame_name = itm_stb.get(ingame_name_id, f'name missing, fqn={fqn}')
+        itm_names_to_fqn[ingame_name] = fqn
+        
+        print(fqn)
+
+
+itm_names_to_fqn = {key: itm_names_to_fqn[key] for key in sorted(itm_names_to_fqn, reverse=True)}
+
+
+save_to_json(itm_armor_pieces, destination_folder + "/armor_data.json")
+save_to_json(itm_names_to_fqn, destination_folder + "/armor_names_to_fqn.json")
+
+save_to_json(data, file_path)
+
+print('\n\n\n')
+print(f"{armor_count} armors in {itm_count} items")
+
+
+
+# endregion ###################################################################
+
+
+
+
+
+
+# #############################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # ---------------------------------------------------------------------------
 # Configuration
