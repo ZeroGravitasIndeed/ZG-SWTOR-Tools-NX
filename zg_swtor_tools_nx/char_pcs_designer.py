@@ -6,6 +6,8 @@ can be used for dynamic sliders limits setting.
 '''
 
 import bpy
+from bpy.app.handlers import persistent
+
 from bpy.props import IntProperty, EnumProperty, PointerProperty, StringProperty, BoolProperty
 from bpy.types import Operator, PropertyGroup
 
@@ -21,18 +23,25 @@ import os
 from pathlib import Path
 import shutil
 
+from .addon_utils.python.gral import load_xml_file
 
 
 from .addon_checks import requirements_checks
 
 
 # #############################################################################
-# SOME GLOBAL CONSTANTS AND VARIABLES:
-# region ######################################################################
+# region SOME GLOBAL CONSTANTS AND VARIABLES:
+# #############################################################################
 
-# Add-on's folder for diverse auxilliary data (Jedipedia, PugTools, etc.).
-ADDON_RESOURCES  = Path(__file__).resolve().parent / "addon_resources"
-ADDON_TEMP_FILES = Path(__file__).resolve().parent / "addon_temp_files"
+ADDON_FOLDER     = Path(__file__).resolve().parent
+
+# Add-on's folders for diverse auxilliary data (Jedipedia, PugTools, etc.).
+ADDON_RESOURCES  = ADDON_FOLDER / "addon_swtor_data"
+ADDON_TEMP_FILES = ADDON_FOLDER / "addon_temp_files"
+
+# For passing objects that could have associated .clo files
+clo_heads = []
+clo_hairs = []
 
 # Holder for loaded SWTOR data resources stored in this add-on's subfolders.
 _SWTOR_DATA = {}
@@ -70,8 +79,8 @@ _SLIDERS_NAMES = (
 
 
 # #############################################################################
-# MINOR UTILITY FUNCTIONS
-# region ######################################################################
+# region MINOR UTILITY FUNCTIONS
+# #############################################################################
 
 def open_xml_file(file_path):
     """
@@ -140,8 +149,8 @@ def delete_collection_recursive(collection):
 
 
 # #############################################################################
-# SWTOR-RELATED AUXILLIARY FUNCTIONS
-# region ######################################################################
+# region SWTOR-RELATED AUXILLIARY FUNCTIONS
+# #############################################################################
 
 # -----------------------------------------------------------------------------
 # Loader function of all SWTOR data resources needed (nodes, texts, etc.)
@@ -150,7 +159,7 @@ def delete_collection_recursive(collection):
 
 def load_swtor_bundled_data():
     '''
-    Loads any needed SWTOR data in this add-on's addon_resources subfolder
+    Loads any needed SWTOR data in this add-on's addon_swtor_data subfolder
     to the _SWTOR_DATA "constant".
     '''
     print('Start loading SWTOR JSON data')
@@ -238,6 +247,18 @@ def load_swtor_bundled_data():
 
 
 
+        # Load appAlignmentAppearancePrototype node (dark side corruption).
+        # We assume they haven't changed through versions
+        # since Nautolan were added to playable species.
+        print('Loading Dark Side Corruption appearance node')
+        pcs_labels = {}
+        zip_path = ADDON_RESOURCES / "appAlignmentAppearancePrototype.zip"
+        with zipfile.ZipFile(zip_path, "r") as archive:
+            with archive.open("appAlignmentAppearancePrototype.json") as file:
+                appAlignmentAppearancePrototype_node = json.load(file)
+            _SWTOR_DATA['appAlignmentAppearancePrototype'] = appAlignmentAppearancePrototype_node
+
+
 
     print('SWTOR data loaded')
     
@@ -252,15 +273,15 @@ def load_swtor_xml_data():
     swtor_io_tools_prefs = bpy.context.preferences.addons["swtor_io_tools"].preferences
     swtor_resources_dir = getattr(swtor_io_tools_prefs, "swtor_resources_dir")
 
-    _SWTOR_DATA['root_xml_skincolor']   = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/skincolor/index.xml')  )
-    _SWTOR_DATA['root_xml_eyecolor']    = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/eyecolor/index.xml')   )
-    _SWTOR_DATA['root_xml_haircolor']   = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/haircolor/index.xml')  )
-    _SWTOR_DATA['root_xml_age']         = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/age/index.xml')        )
-    _SWTOR_DATA['root_xml_complexion']  = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/complexion/index.xml') )
-    _SWTOR_DATA['root_xml_facepaint']   = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/facepaint/index.xml')  )
-    _SWTOR_DATA['root_xml_head']        = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/head/index.xml')       )
-    _SWTOR_DATA['root_xml_hair']        = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/hair/index.xml')       )
-    _SWTOR_DATA['root_xml_facehair']    = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/facehair/index.xml')   )
+    _SWTOR_DATA['root_xml_skincolor']   = load_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/skincolor/index.xml')  )
+    _SWTOR_DATA['root_xml_eyecolor']    = load_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/eyecolor/index.xml')   )
+    _SWTOR_DATA['root_xml_haircolor']   = load_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/haircolor/index.xml')  )
+    _SWTOR_DATA['root_xml_age']         = load_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/age/index.xml')        )
+    _SWTOR_DATA['root_xml_complexion']  = load_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/complexion/index.xml') )
+    _SWTOR_DATA['root_xml_facepaint']   = load_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/facepaint/index.xml')  )
+    _SWTOR_DATA['root_xml_head']        = load_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/head/index.xml')       )
+    _SWTOR_DATA['root_xml_hair']        = load_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/hair/index.xml')       )
+    _SWTOR_DATA['root_xml_facehair']    = load_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/facehair/index.xml')   )
 
 
 
@@ -317,11 +338,11 @@ def get_matfile_data(mat_filepath):
 
     # Set Neutral maps for these cases (just in case a parser complains).
     if not ('UsesFur' in mat_inputs and mat_inputs['UsesFur'] == "True"):
-        mat_inputs['DirectionMap'] = {'value': "/art/defaultassets/black.dds"}
+        mat_inputs['DirectionMap'] = {'value': "/art/defaultassets/black"}
         
     if not ('UsesAnimatedWrinkles' in mat_inputs and mat_inputs['UsesAnimatedWrinkles'] == "True"):
-        mat_inputs['animatedWrinkleMap']  = {'value': "/art/defaultassets/flat_w.dds"}
-        mat_inputs['animatedWrinkleMask'] = {'value': "/art/defaultassets/flat_w.dds"}
+        mat_inputs['animatedWrinkleMap']  = {'value': "/art/defaultassets/flat_w"}
+        mat_inputs['animatedWrinkleMask'] = {'value': "/art/defaultassets/flat_w"}
     
     return mat_inputs
     
@@ -357,11 +378,12 @@ def merge_mat_dynamic_node_data(matfile_data, dynamic_node_data, skinmaterialind
     
     # DYNAMIC NODES ARE A MESS:
     # - They contain key:values ONLY for what changes in a material.
-    # - appPalette data is decomposed into these key:values:
+    # - appPalette data is decomposed into HSBC key:values:
     #     appPaletteHue
     #     appPaletteSaturation
-    #     appPaletteContrast
     #     appPaletteBrightness
+    #     appPaletteContrast
+    
     # - BUT the rest are a mishmash:
     #     appPaletteSpecular
     #     appPaletteMetallicSpecular
@@ -388,7 +410,6 @@ def merge_mat_dynamic_node_data(matfile_data, dynamic_node_data, skinmaterialind
     for key,value in dynamic_node_data.items():
         if not key.startswith('app'):
             continue
-            
         elif key == 'appPaletteHue':
             matfile_data[palette_prefix]['value'][0] = str(value)
         elif key == 'appPaletteSaturation':
@@ -444,11 +465,11 @@ def process_wildcards(string, bodytype_code):
 
 
 # #############################################################################
-# MAIN SWTOR NODE PROCESSING FUNCTIONS
-# region ######################################################################
+# region MAIN SWTOR NODE PROCESSING FUNCTIONS
+# #############################################################################
 
 # -----------------------------------------------------------------------------
-# Character data to ami IDs processor
+# region Character data to ami IDs processor
 # -----------------------------------------------------------------------------
 
 def parse_pcs_node_and_sliders(self, context):
@@ -458,7 +479,6 @@ def parse_pcs_node_and_sliders(self, context):
     # (It's not taking advantage of self right now. Investigate possibilities)
 
     # SWTOR DATA PROCESSING
-    # region
 
     # How to obtain the appPcsCustomizationSlots IDs that provide ModelIDs, Attachment models, and MaterialIndex for each head attribute (model, complexion, etc):
     # - Compose a FQN out of class, gender, and species selection, and load the node with that FQN.
@@ -475,11 +495,11 @@ def parse_pcs_node_and_sliders(self, context):
     sliders_limits  = context.scene.zgswtor_pcs_sliders_limits
 
     # Are we using Legacy assets?
-    legacy_mode = context.scene.zgswtor_pcs_legacy_mode
+    legacy_mode = context.scene.zgswtor_pcs_full_legacy_mode
     if legacy_mode:
-        legacy_prefix = "legacy_"
+        legacy_nodes_prefix = "legacy_"
     else:
-        legacy_prefix = ""
+        legacy_nodes_prefix = ""
 
 
 
@@ -510,11 +530,11 @@ def parse_pcs_node_and_sliders(self, context):
     
     # Many species can have a "_legacy" suffix depending on faction.
     # This check simplifies handling that.
-    if pcs_node_fqn not in _SWTOR_DATA[legacy_prefix + 'pcs_nodes']:
+    if pcs_node_fqn not in _SWTOR_DATA[legacy_nodes_prefix + 'pcs_nodes']:
         pcs_node_fqn = f'pcs.{sliders.pcs_class}.{sliders.pcs_gender}.{f"{species}_legacy"}'
 
     # Get the character's node
-    pcs_node = _SWTOR_DATA[legacy_prefix + 'pcs_nodes'][pcs_node_fqn]
+    pcs_node = _SWTOR_DATA[legacy_nodes_prefix + 'pcs_nodes'][pcs_node_fqn]
 
 
 
@@ -544,13 +564,14 @@ def parse_pcs_node_and_sliders(self, context):
     appPcsHeadSkeletonMap_indexed = {elem['key']:elem for elem in appPcsHeadSkeletonMap}
     
     
-    # List of pertinent sliders and each of their positions'appPcsCustomizationSlots' IDs.
+    # List of Player Character's sliders applicable to their class/gender/species combination
+    # and each of their positions'appPcsCustomizationSlots' IDs.
     # The ID to use matches the one for the head selection at appPcsHeadSkeletonMap.
     appPcsSliderMap = pcs_node['appPcsSliderMap']                 
 
 
     # List of all appearance entries' in the pcs node (with final Models and materials IDs, etc.)
-    # that all our pcs node traversing and selecting will ultimately lead to.
+    # that all our traversing through the pcs node and selecting will ultimately lead to.
     appPcsCustomizationSlots = pcs_node['appPcsCustomizationSlots']
     #       Auxilliary dict to make appPcsHeadSkeletonMap lookups faster.
     appPcsCustomizationSlots_indexed = {elem['key']:elem for elem in appPcsCustomizationSlots}
@@ -582,6 +603,8 @@ def parse_pcs_node_and_sliders(self, context):
     # We are using the index.xml versions of those nodes
     # that exist in the assets extraction, to avoid
     # having to store yet more JSON data in the add-on.
+    # Also, they seem to be more complete (DS Corruption
+    # and other alternate variants data).
 
     # We'll store the appPcsCustomizationSlots' IDs here:
     ami_ids = {}
@@ -605,7 +628,6 @@ def parse_pcs_node_and_sliders(self, context):
 
     # Get the head's appPcsCustomizationSlots ID.
     ami_ids['appSlotHead']  = list_of_customization_ids_for_head_slider[int( sliders.appSlotHead ) - 1]
-    # ami_ids['appSlotHead']  = list_of_customization_ids_for_head_slider[sliders.pcs_bodytype - 1]
     ami_data['appSlotHead'] = appPcsCustomizationSlots_indexed[ ami_ids['appSlotHead'] ]
 
 
@@ -615,7 +637,7 @@ def parse_pcs_node_and_sliders(self, context):
     # Use the head slot's ID to find in appPcsSliderMap the relevant list of other slots
     # (IT ONLY CONTAINS THE SLOTS ACTUALLY IN USE FOR THE SPECIES AND GENDER).
     # Instead of using an aux indexed dict version of this list, it is cheaper to loop through it
-    # as it is only used once (if we make this add-on interactive that could change).
+    # as it is only read once (if we make this add-on interactive that could change).
     for elem in appPcsSliderMap:
         if elem['key'] == ami_ids['appSlotHead']:
             existing_slots = elem['value']
@@ -625,7 +647,7 @@ def parse_pcs_node_and_sliders(self, context):
             break
 
     
-    # With the list of slots we get the lists of appPcsCustomizationSlots ID each of those hold.
+    # With the list of slots we get the lists of appPcsCustomizationSlots ID that each of those hold.
     for slider_name in _SLIDERS_NAMES:
         if slider_name in existing_slots_indexed:
             list_of_customization_ids_for_head_slider = existing_slots_indexed[slider_name]
@@ -651,53 +673,68 @@ def parse_pcs_node_and_sliders(self, context):
     setattr(sliders_labels, "appSlotHead", slider_label)
 
 
-    # endregion
-    
-    # JSON DATA EXPORT
-    # region
-    # Build a paths.json file compatible with the existing char assembler add-ons.
 
     bodytype_code = _BODYTYPE_CODES[ f"{sliders.pcs_gender[0:1]}{sliders.pcs_bodytype}" ]
 
 
-    # endregion
     return ami_data, bodytype_code, pcs_node_fqn
 
+# endregion
 
-# DOESN'T SEEM TO BE NECESSARY
-# def _run_pcs_assembler_operator_once_after_register():
-#     '''
-#     Launches this module's process_pcs operator once
-#     after registering the module's operators and properties
-#     in order to show valid sliders values, labels, and limits
-#     on add-on enable.
-#     '''
-#     return
-#     # Make sure Blender has a valid context before invoking.
-#     try:
-#         bpy.ops.zgswtor.pcs_assembler()
-#     except RuntimeError as e:
-#         print(f"Could not run main operator: {e}")
 
-#     # Returning None means: don't run this timer again.
-#     return None
 
+
+# region ONCE AFTER REG
+def _run_once_after_register_or_new_doc():
+    '''
+    Launches this module's parse_pcs_node_and_sliders fn once
+    after registering the module's operators and properties
+    in order to show valid sliders values, labels, and limits
+    on add-on enable.
+    '''
+    # Make sure Blender has a valid context before invoking.
+    # return
+    try:
+        parse_pcs_node_and_sliders(None, bpy.context)
+        
+        # force UI redraw
+        for area in bpy.context.screen.areas:
+            if area.type == 'VIEW_3D':
+                area.tag_redraw()
+    
+    except RuntimeError as e:
+        print(f"Could not do first run: {e}")
+
+    # Returning None means: don't run this timer again.
+    return None
+
+
+@persistent
+def on_document_load(filepath):
+    print("Process PCS's sliders on new document")
+    _run_once_after_register_or_new_doc()
+
+
+
+
+# endregion
 
 
 
 # -----------------------------------------------------------------------------
-# Character ami IDs to assets to JSON processor
+# region Character ami IDs to assets to JSON processor
 # -----------------------------------------------------------------------------
 
 def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
     '''
     Convert ami nodes' IDs data to paths.json data
     (we are using the index.xml versions of those nodes)
-    '''
-    
-    '''
+
+
     NOTE: ABOUT MATERIALS IN THE AMI SYSTEM (AMI NODES/INDEX.XML FILES) AND SkinMaterialIndex.
-    If it's set to -1, the model has no skin, aka no material should be replaced by the skin material. If it's set to 1, then the material at index #1 (second material) must be replaced. If the field is missing, then it's set to 0, aka the material at index #0 (first material) must be replaced.
+    - If it's set to -1, the model has no skin, aka no material should be replaced by the skin material.
+    - If it's set to 1, then the material at index #1 (second material) must be replaced.
+    - If the field is missing, then it's set to 0, aka the material at index #0 (first material) must be replaced.
     
     E.g. in ami.chest:
     2533911: field is missing (default value 0) = replace material #0 with skin material
@@ -717,7 +754,7 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
 
     # ALL DYNAMIC NODES DATA IS ALREADY LOADED IN ADDON_RESOURCES["dynamic"]
 
-    # This preloads all index.xml data    
+    # This preloads all the relevant resource folder's index.xml files' data    
     if not 'root_xml_head' in _SWTOR_DATA:
         load_swtor_xml_data()
 
@@ -727,13 +764,21 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
     swtor_resources_dir = getattr(swtor_io_tools_prefs, "swtor_resources_dir")
     swtor_legacy_resources_dir = getattr(swtor_io_tools_prefs, "swtor_legacy_resources_dir")
     
+        
     # Are we using Legacy assets?
-    legacy_mode = context.scene.zgswtor_pcs_legacy_mode
-    if legacy_mode:
-        legacy_prefix = "legacy_"
+    full_legacy_mode  = context.scene.zgswtor_pcs_full_legacy_mode
+    mixed_legacy_mode = context.scene.zgswtor_pcs_mixed_legacy_mode
+    
+    if full_legacy_mode:
+        print("Full Legacy Mode")
+        legacy_nodes_prefix = "legacy_"
+        swtor_resources_variable_folderpath = swtor_legacy_resources_dir
+    elif mixed_legacy_mode and not full_legacy_mode:
+        print("Mixed Legacy Mode")
+        legacy_nodes_prefix = ""
         swtor_resources_variable_folderpath = swtor_legacy_resources_dir
     else:
-        legacy_prefix = ""
+        legacy_nodes_prefix = ""
         swtor_resources_variable_folderpath = swtor_resources_dir
 
 
@@ -741,15 +786,114 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
     
     gender_code   = bodytype_code[1:2]
 
+    # -------------------------------
+    # Process Dark Side Corruption first
+    # (appAlignmentAppearance)
+    # region DS Corruption
+    # -------------------------------
+    # Some of its results can override or alter:
+    # * Eye material ID.
+    # * dynamic.eyecolor palette values.
+    # * Complexion ID.
+    # * dynamic.skincolor palette values.
+    
+    # markdown description of usage provided by C-3PO:
 
-    char_data = {}
+    # Use the character’s **`chrForceAlignmentTier`** and species. The tier selects the row, and the species determines whether an override replaces that row.
+    # To match the in-game character, also check **Show Dark Side Corruption** for the displayed outfit. When it’s off, use the character’s normal appearance.
+
+    # Character alignment | `chrForceAlignmentTier` | Row in File Reader
+    # Dark I → Dark V     | `−1 → −5`               | `1 → 5` (in that order: 1 is just Sith eyes, 5 is max paleness)
+    # Neutral             | `0`                     | Use the normal appearance
+    # Light I → Light V   | `+1 → +5`               | `6 → 10`
+
+    # Once you have the row, look for **`appAlignmentAppearanceSpeciesOverrides[species][row]`**. If it exists, use that whole entry.
+    # Otherwise use the same row of **`appAlignmentAppearanceDefaults`**. File Reader and HeroScript number the default rows from **1**.
+    # In the raw JSON, the defaults are an array, so use `defaults[row - 1]`. The override keys keep their original numbers.
+
+    # For example, a **Dark IV Nautolan** has tier `−4`. Use `overrides["13"]["4"]`, which gives eye model `3130473`.
+    # A **Dark IV Human** uses default row **4** (`defaults[3]`), which gives eye model `1005511`.
+    # In the live node, the eye model ID is the only field where each Nautolan entry differs from its matching default.
+    # The five Light rows all have identical settings and leave the appearance unchanged.e)
+
+    # If you only have **alignment points**, subtract Dark points from Light points.
+    # Ranks I–V begin at net magnitudes of **300, 2,000, 4,000, 6,750, and 10,000**, inclusive.
+    # A negative net is Dark.
+
+    # **In File Reader**, open `appAppearanceUserClassMethods` and select `ApplyAlignmentModel`.
+    # That’s where you can see the client convert the signed tier to a row and pass it,
+    # together with `Me.GetRace()`, to `getAlignmentAppearanceSettings`.
     
     
+    # HOW TO APPLY THE MODIFIERS:
+    # H, S, B, C = the skin palette's own appPaletteHue / Saturation / Brightness / Contrast
+
+    # hue        = H × SkinHueMultiplier
+    # saturation = pow(S × SkinSaturationMultiplier, SkinContrastAdjust) + SkinSaturationOffset
+    # brightness = pow(B + 2 × SkinBrightnessOffset, SkinContrastAdjust) × SkinBrightnessMultiplier − SkinBrightnessOffset
+    # contrast   = C × SkinContrastMultiplier
+
+    # Order per component:
+    #   Hue, contrast: multiplier only.
+    #   Saturation: multiplier → power → add offset.
+    #   Brightness: add twice the offset → power → multiplier → subtract the offset once.
+
+    # Eyes (head slot, palette index 1) use a separate path with no power and no offsets: S × EyeSaturationMultiplier and B × EyeBrightnessMultiplier.
+    # If that brightness is ≤ 0.0001 and the eye multiplier isn't 1, brightness becomes EyeBrightnessMultiplier − 1.
+
+
+    
+    sliders = context.scene.zgswtor_pcs_sliders
+    ds_corruption_idx = int( getattr(sliders, 'pcs_alignment') )
+    
+    if ds_corruption_idx == 0:
+        ds_corruption = False
+    else:
+        ds_corruption = True
+        if "nautolan" not in getattr(sliders, 'pcs_species'):
+            appAlignmentAppearance_data = _SWTOR_DATA['appAlignmentAppearancePrototype']['data']['appAlignmentAppearanceDefaults'][ds_corruption_idx - 1]
+        else:
+            appAlignmentAppearance_data = _SWTOR_DATA['appAlignmentAppearancePrototype']['data']['appAlignmentAppearanceSpeciesOverrides'][0]['value'][ds_corruption_idx - 1]['value']
+            
+        ds_appSkinHueAdjust               = appAlignmentAppearance_data.get('appSkinHueAdjust', 1)
+        ds_appSkinSaturationAdjust        = appAlignmentAppearance_data.get('appSkinSaturationAdjust', 1)
+        ds_appSkinBrightnessAdjust        = appAlignmentAppearance_data.get('appSkinBrightnessAdjust', 1)
+        ds_appSkinContrastAdjust          = appAlignmentAppearance_data.get('appSkinContrastAdjust', 1)
+    
+        ds_appSkinHueMultiplier           = appAlignmentAppearance_data.get('appSkinHueMultiplier', 1)
+        ds_appSkinSaturationMultiplier    = appAlignmentAppearance_data.get('appSkinSaturationMultiplier', 1)
+        ds_appSkinBrightnessMultiplier    = appAlignmentAppearance_data.get('appSkinBrightnessMultiplier', 1)
+        ds_appSkinContrastMultiplier      = appAlignmentAppearance_data.get('appSkinContrastMultiplier', 1)
+        
+        ds_appSkinHueOffset               = appAlignmentAppearance_data.get('appSkinHueOffset', 0)
+        ds_appSkinSaturationOffset        = appAlignmentAppearance_data.get('appSkinSaturationOffset', 0)
+        ds_appSkinBrightnessOffset        = appAlignmentAppearance_data.get('appSkinBrightnessOffset', 0)
+        ds_appSkinContrastOffset          = appAlignmentAppearance_data.get('appSkinContrastOffset', 0)
+    
+    
+        ds_appEyeColorModelId             = appAlignmentAppearance_data.get('appEyeColorModelId', None)
+    
+        ds_appEyeSaturationMultiplier     = appAlignmentAppearance_data.get('appEyeSaturationMultiplier', 1)
+        ds_appEyeBrightnessMultiplier     = appAlignmentAppearance_data.get('appEyeBrightnessMultiplier', 1)
+        
+        ds_appComplexionVariantModelIndex = appAlignmentAppearance_data.get('appComplexionVariantModelIndex', None)
+
+        print("ds_appEyeColorModelId              " ,  ds_appEyeColorModelId               )
+        print()
+        print("ds_appEyeSaturationMultiplier      " ,  ds_appEyeSaturationMultiplier       )
+        print("ds_appEyeBrightnessMultiplier      " ,  ds_appEyeBrightnessMultiplier       )
+        print()
+        print("ds_appComplexionVariantModelIndex  " ,  ds_appComplexionVariantModelIndex   )
+        print()
+        print()
+        print()
+    
+    # endregion
     
     # PROCESS SLOTS WITH ONLY COLORS (WHICH REQUIRE READING THE DYNAMIC NODES)
     # -----------------------------------------------------------------------------
     # THESE HAVE AS BASE FILES THE DYNAMIC NODES FOR RE-HUEING THE SKIN/HAIR/FACEHAIR SKINMATERIALS
-    # region
+    # region Process Colors
     
     # Process appSlotSkinColor (this skin color will be applied to all SkinMats, save for the secondary hair "skin")
     if 'appSlotSkinColor' not in ami_data:
@@ -758,13 +902,13 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
         data = ami_data['appSlotSkinColor']['value']
         appAppearanceSlotModelID = data['appAppearanceSlotModelID']
         
-        # root_xml_skincolor = open_xml_file(os.path.normpath( f"{swtor_resources_dir}art/dynamic/skincolor/index.xml"))
         asset = _SWTOR_DATA['root_xml_skincolor'].find(f"./Asset[ID='{appAppearanceSlotModelID}']")
         
         basefile = asset.find('BaseFile').text
         node_name = f'dynamic.skincolor.{os.path.splitext(os.path.basename(basefile))[0]}'
         
-        dynamic_skincolor = _SWTOR_DATA[legacy_prefix + 'dynamic_nodes'][node_name]
+        dynamic_skincolor = _SWTOR_DATA[legacy_nodes_prefix + 'dynamic_nodes'][node_name]
+        
 
 
     # Process appSlotEyeColor
@@ -774,13 +918,17 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
         data = ami_data['appSlotEyeColor']['value']
         appAppearanceSlotModelID = data['appAppearanceSlotModelID']
         
-        # root_xml_eyecolor = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/eyecolor/index.xml') )
+        # If Dark Side Corruption, get alternate dynamic.eyecolor node info. 
+        if ds_corruption and ds_appEyeColorModelId:
+            appAppearanceSlotModelID = ds_appEyeColorModelId
+        
         asset = _SWTOR_DATA['root_xml_eyecolor'].find(f"./Asset[ID='{appAppearanceSlotModelID}']")
         
         basefile = asset.find('BaseFile').text
         node_name = f'dynamic.eyecolor.{os.path.splitext(os.path.basename(basefile))[0]}'
         
-        dynamic_eyecolor = _SWTOR_DATA[legacy_prefix + 'dynamic_nodes'][node_name]
+        dynamic_eyecolor = _SWTOR_DATA[legacy_nodes_prefix + 'dynamic_nodes'][node_name]
+        
     
     
     # Process appSlotHairColor
@@ -790,18 +938,20 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
         data = ami_data['appSlotHairColor']['value']
         appAppearanceSlotModelID = data['appAppearanceSlotModelID']
         
-        # root_xml_haircolor = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/haircolor/index.xml') )
         asset = _SWTOR_DATA['root_xml_haircolor'].find(f"./Asset[ID='{appAppearanceSlotModelID}']")
         
         basefile = asset.find('BaseFile').text
         node_name = f'dynamic.haircolor.{os.path.splitext(os.path.basename(basefile))[0]}'
         
-        dynamic_haircolor = _SWTOR_DATA[legacy_prefix + 'dynamic_nodes'][node_name]
+        dynamic_haircolor = _SWTOR_DATA[legacy_nodes_prefix + 'dynamic_nodes'][node_name]
 
-
+    # endregion
+    
+    
 
     # PROCESS SLOTS WITH ONLY TEXTUREMAPS (TO BE APPLIED TO THE HEAD)
     # -----------------------------------------------------------------------------
+    # region Process TextureMaps
 
     # Process appSlotAge
     if 'appSlotAge' not in ami_data:
@@ -810,7 +960,6 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
         data = ami_data['appSlotAge']['value']
         appAppearanceSlotModelID = data['appAppearanceSlotModelID']
         
-        # root_xml_age = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/age/index.xml') )
         asset = _SWTOR_DATA['root_xml_age'].find(f"./Asset[ID='{appAppearanceSlotModelID}']")
         
         age_basefile = asset.find('BaseFile').text
@@ -822,12 +971,26 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
     else:
         data = ami_data['appSlotComplexion']['value']
         appAppearanceSlotModelID = data['appAppearanceSlotModelID']
-        
-        # root_xml_complexion = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/complexion/index.xml') )
+                
         asset = _SWTOR_DATA['root_xml_complexion'].find(f"./Asset[ID='{appAppearanceSlotModelID}']")
         
         complexion_basefile = asset.find('BaseFile').text
 
+        # If Dark Side Corruption, get alternate complexion.
+        if ds_corruption and ds_appComplexionVariantModelIndex:
+            # Find in the normal complexion data the ComplexionVariants that point
+            # to alternate complexions' IDs for Dark Side Corruption.
+            # ATTENTION: ET's XPath doesn't support booleans for attributes:
+            # This doesn't work: [@attr1=x and @attr2=y]
+            # Chain the attributes instead: [@attr1=x][@attr2=y]
+            appAppearanceSlotModelID = asset.find(
+                f'.//CustomData/ComplexionVariants/Variant[@AlignmentType="chrAlignment_Dark"][@Tier="{ds_appComplexionVariantModelIndex}"]'
+                ).text
+            
+            asset = _SWTOR_DATA['root_xml_complexion'].find(f"./Asset[ID='{appAppearanceSlotModelID}']")
+            complexion_basefile = asset.find('BaseFile').text
+            
+            
 
     # Process appSlotFacePaint
     if 'appSlotFacePaint' not in ami_data:
@@ -836,7 +999,6 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
         data = ami_data['appSlotFacePaint']['value']
         appAppearanceSlotModelID = data['appAppearanceSlotModelID']
         
-        # root_xml_facepaint = open_xml_file( os.path.join(swtor_resources_dir, 'art/dynamic/facepaint/index.xml') )
         asset = _SWTOR_DATA['root_xml_facepaint'].find(f"./Asset[ID='{appAppearanceSlotModelID}']")
         
         facepaint_basefile = asset.find('BaseFile').text
@@ -847,6 +1009,7 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
     
     # PROCESS SLOTS WITH MODELS AND MATERIALS
     # -----------------------------------------------------------------------------
+    # region Process Objects
 
     # Process appSlotHead
     data = ami_data['appSlotHead']['value']
@@ -874,6 +1037,12 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
                 attachment_path = [attachment.get("filename")]
                 head_models += attachment_path
     head_models = [process_wildcards(item, bodytype_code) for item in head_models]
+    
+    # heads can have associated .clo files (technically there's a single head object for PCs in underwear).
+    # CHECK WHETHER LISTING TO MAKE IT A DIFFERENT LIST IS NECESSARY OR NOT
+    global clo_heads
+    clo_heads = list(head_models)
+
 
 
     # -------------------------------
@@ -891,6 +1060,25 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
     if dynamic_skincolor:
         head_material_data = merge_mat_dynamic_node_data(head_material_data, dynamic_skincolor, head_material_index)
 
+    if ds_corruption:
+        palette = head_material_data["palette1"]['value']
+        palette = [float(elem) for elem in palette]  # turn its elements from str to float temporarily
+        
+        # hue = H × SkinHueMultiplier
+        palette[0] = palette[0] * ds_appSkinHueMultiplier
+        
+        # saturation = pow(S × SkinSaturationMultiplier, SkinContrastAdjust) + SkinSaturationOffset
+        palette[1] = ( (palette[1] * ds_appSkinSaturationMultiplier) ** ds_appSkinContrastAdjust ) + ds_appSkinSaturationOffset
+        
+        # brightness = pow(B + 2 × SkinBrightnessOffset, SkinContrastAdjust) × SkinBrightnessMultiplier − SkinBrightnessOffset
+        palette[2] = ( ( (palette[2] + (2 * ds_appSkinBrightnessOffset)) ** ds_appSkinContrastAdjust ) * ds_appSkinBrightnessMultiplier ) - ds_appSkinBrightnessOffset
+        
+        # contrast = C × SkinContrastMultiplier
+        palette[3] = palette[3] * ds_appSkinContrastMultiplier
+        
+        head_material_data["palette1"]['value'] = [str(elem) for elem in palette]  # turn its elements back to str
+        # palette = [str(elem) for elem in palette]  # turn its elements back to str
+
 
     # -------------------------------
     # Skinmaterials
@@ -907,7 +1095,27 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
         # Merge skincolor dynamic node data
         if dynamic_skincolor:
             skinmaterials_data[slot] = merge_mat_dynamic_node_data(skinmaterials_data[slot], dynamic_skincolor)
-
+            
+            if ds_corruption:
+                palette = skinmaterials_data[slot]["palette1"]['value']
+                palette = [float(elem) for elem in palette]  # turn its elements from str to float temporarily
+                
+                # hue = H × SkinHueMultiplier
+                palette[0] = palette[0] * ds_appSkinHueMultiplier
+                
+                # saturation = pow(S × SkinSaturationMultiplier, SkinContrastAdjust) + SkinSaturationOffset
+                palette[1] = ( (palette[1] * ds_appSkinSaturationMultiplier) ** ds_appSkinContrastAdjust ) + ds_appSkinSaturationOffset
+                
+                # brightness = pow(B + 2 × SkinBrightnessOffset, SkinContrastAdjust) × SkinBrightnessMultiplier − SkinBrightnessOffset
+                palette[2] = ( ( (palette[2] + (2 * ds_appSkinBrightnessOffset)) ** ds_appSkinContrastAdjust ) * ds_appSkinBrightnessMultiplier ) - ds_appSkinBrightnessOffset
+                
+                # contrast = C × SkinContrastMultiplier
+                palette[3] = palette[3] * ds_appSkinContrastMultiplier
+                
+                skinmaterials_data[slot]["palette1"]['value'] = [str(elem) for elem in palette]  # turn its elements back to str
+                # palette = [str(elem) for elem in palette]  # turn its elements back to str
+                
+          
 
     # -------------------------------
     # Eye material
@@ -919,12 +1127,31 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
         eye_material_filepath = eye_material.get("filename")
         eye_material_filepath = process_wildcards(eye_material_filepath, bodytype_code)
         eye_material_data = get_matfile_data(os.path.normpath( f'{swtor_resources_variable_folderpath}{eye_material_filepath}') )
+        
         # Merge eyecolor dynamic node data
         eye_material_index = "0"  # for some resason the -1 in the data goes wrong, so…
         if dynamic_eyecolor:
             eye_material_data = merge_mat_dynamic_node_data(eye_material_data, dynamic_eyecolor, eye_material_index)
+            
+            if ds_corruption:
+                palette = eye_material_data["palette1"]['value']
+                palette = [float(elem) for elem in palette]  # turn its elements from str to float temporarily
 
-
+                # Saturation = S × EyeSaturationMultiplier.
+                palette[1] = palette[1] * ds_appEyeSaturationMultiplier
+                
+                # Brightness = B × EyeBrightnessMultiplier
+                # If that brightness is ≤ 0.0001 and the eye multiplier isn't 1, brightness becomes EyeBrightnessMultiplier − 1.
+                if palette[2] <= 0.0001 and ds_appEyeBrightnessMultiplier != 1:
+                    palette[2] = ds_appEyeBrightnessMultiplier -1
+                else:
+                    palette[2] = palette[2] * ds_appEyeBrightnessMultiplier
+                # If that brightness is ≤ 0.0001 and the eye multiplier isn't 1, brightness becomes EyeBrightnessMultiplier − 1.
+                # palette[2] = ds_appEyeBrightnessMultiplier -1
+                # if palette[2] <= 0.0001 and ds_appEyeBrightnessMultiplier != 1:
+                #     palette[2] = palette[2] * ds_appEyeBrightnessMultiplier
+                    
+                eye_material_data["palette1"]['value'] = [str(elem) for elem in palette]  # turn its elements back to str
 
     # -------------------------------
     # hand model and materials:
@@ -1041,6 +1268,10 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
                     hair_attachment_path = [hair_attachment.get("filename")]
                     hair_models += hair_attachment_path
         hair_models = [process_wildcards(item, bodytype_code) for item in hair_models]
+        
+        # hairs can have associated .clo files
+        global clo_hairs
+        clo_hairs = hair_models
 
 
         # -------------------------------
@@ -1128,11 +1359,14 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
                 facehair_material_data = merge_mat_dynamic_node_data(facehair_material_data, dynamic_haircolor, facehair_material_index)
             elif derived == "Garment" and dynamic_skincolor:
                 facehair_material_data = merge_mat_dynamic_node_data(facehair_material_data, dynamic_haircolor, facehair_material_index)
-        
+    
+    # endregion
+
+
     # Build paths.json dict
     # -----------------------------------------------------------------------------
     # Create the blocks first and organize them later
-    # region
+    # region Process JSON
     
     
     print("Generating JSON data")
@@ -1151,7 +1385,8 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
             "charName"                  : "",
             "nppPath"                   : pcs_node_fqn,
             "bodyType"                  : bodytype_code,
-            "prefer_legacy_materials"   : legacy_mode,
+            "ignore_mat_dds_paths"      : ds_corruption,
+            "prefer_legacy_materials"   : full_legacy_mode,
             "errors"                    : [],
         }
     ]
@@ -1728,7 +1963,7 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
     # --------------------------------------------------------------
     # As the skinMats list's hair element's presence depends on the species,
     # we have to pre-compose the materials list before adding it to paths_data.
-    # region
+    # region skin materials
     skinMats_list = [
         # boot
         {
@@ -2055,12 +2290,13 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
         f.write( json.dumps(paths_data, indent=4) )
         print("paths.json file saved")
 
-
+# endregion
 
 
 # -----------------------------------------------------------------------------
 # Scene updater (clear previous character and call SWTOR IO Tools)
 # -----------------------------------------------------------------------------
+# region Update Scene
 
 def generate_character(self, context):
     
@@ -2070,17 +2306,46 @@ def generate_character(self, context):
     process_pcs_data(self, context, ami_data, bodytype_code, fqn)
 
 
+
     # Delete previous results (collections and its objects)
     for coll in bpy.data.collections:
         if coll.name.startswith("My Player Character"):
             delete_collection_recursive(coll)
     purge = bpy.ops.outliner.orphans_purge(do_recursive=True)
         
+        
+        
     # Call SWTOR IO Tools's import_mesh.gr2_json()
     # to process the JSON data and assemble the character.
+
+    # We'll need to explicitly pass all parameters because the operator
+    # will use defaults otherwise instead of the SWTOR IO Tools' properties.
+    # We can read the properties' state in IO Tools' preferences.
+    swtor_io_tools_prefs = bpy.context.preferences.addons["swtor_io_tools"].preferences
+
+
+    ds_corruption_idx = int( getattr(context.scene.zgswtor_pcs_sliders, 'pcs_alignment') ) > 0
+
     try:
         paths_json_filepath = f"{ADDON_TEMP_FILES}/My Player Character.json"
-        result = bpy.ops.import_mesh.gr2_json(filepath = paths_json_filepath, prefer_legacy_materials = context.scene.zgswtor_pcs_legacy_mode)
+        
+        result = bpy.ops.import_mesh.gr2_json(
+            # These ones are determined by us
+            filepath = paths_json_filepath,
+            prefer_legacy_materials              = context.scene.zgswtor_pcs_full_legacy_mode,
+            ignore_mat_dds_paths                 = True,
+            correct_twilek_eyes_uv               = False,  # This one we need to think about
+            job_results_rich                     = False,
+            job_results_accumulate               = True,
+            enforce_neutral_settings             = False,
+
+            # and these ones we read from the SWTOR IO Tools' preferences
+            append_character_name_to_collections = getattr(swtor_io_tools_prefs, 'gr2_append_character_name_to_collections_default'),
+            # npc_uses_skin                        = getattr(swtor_io_tools_prefs, 'npc_uses_skin'),  # irrelevant
+            import_skeleton                      = getattr(swtor_io_tools_prefs, 'gr2_import_skeleton_default'),
+            bind_to_skeleton                     = getattr(swtor_io_tools_prefs, 'gr2_bind_to_skeleton_default'),
+            )
+        
         print(result)
         if result == {"CANCELLED"}:
             print(f"\n\nWARNING: SWTOR IO Tools Add-on failed to import {paths_json_filepath}\n\n")
@@ -2095,22 +2360,94 @@ def generate_character(self, context):
         print()
         print("CANCELLING CHARACTER IMPORT")
         report_text = "The SWTOR IO Tools Add-on crashed while processing this character's Path file. \nPlease check if any of its assets is missing. "
-        if swtor_resources_folderpath == None:
-            report_text += "\nIf a SWTOR assets extraction's 'resources' folder is available, set it in this Add-on's Preferences and try again."
         self.report({"WARNING"}, report_text)
         bpy.context.window.cursor_set("DEFAULT")  # Show normal cursor icon
         return {"CANCELLED"}
 
+
+    if getattr(swtor_io_tools_prefs, 'gr2_import_skeleton_default'):
+        add_clo_bones(self, context)
+    
     bpy.ops.object.select_all(action='DESELECT')
     
     
     
+# endregion
+    
+    
+    
+
+# -----------------------------------------------------------------------------
+# Add .clo bones
+# -----------------------------------------------------------------------------
+# Region Add .Clo Bones
+
+def add_clo_bones(self, context):
+    
+    if not clo_heads and not clo_hairs:
+        return    
+    
+    # Determine .clo files to use.
+    swtor_io_tools_prefs = bpy.context.preferences.addons["swtor_io_tools"].preferences
+    swtor_resources_dir = getattr(swtor_io_tools_prefs, "swtor_resources_dir")
+    
+    clo_filepaths = []
+
+    for clo_head in clo_heads:
+        clo_head_filepath = os.path.join(swtor_resources_dir, f"{clo_head[1:-4]}.clo")
+        if os.path.isfile(clo_head_filepath):
+            clo_filepaths += [clo_head_filepath]
+        
+    for clo_hair in clo_hairs:
+        clo_hair_filepath = os.path.join(swtor_resources_dir, f"{clo_hair[1:-4]}.clo")
+        if os.path.isfile(clo_hair_filepath):
+            clo_filepaths += [clo_hair_filepath]
+
+    if not clo_filepaths:
+        return
+    
+    
+    # Detect skeleton in My Player Character's collection.
+    pc_coll = bpy.data.collections.get('My Player Character')
+    if not pc_coll:
+        return
+    
+    skeleton = ""
+    for obj in pc_coll.objects:
+        if "_skeleton" in obj.name:
+            skeleton = obj.name
+            break    
+    if skeleton == None:
+        return
+    
+    
+    for clo_filepath in set(clo_filepaths):  # set() gets rid of possible duplicates
+        print(clo_filepath)
+        result = bpy.ops.import_cloth.clo(filepath=clo_filepath, armature_name=skeleton)
+    
+
+# endregion
+
 
 # -----------------------------------------------------------------------------
 # Some properties updater functions
 # -----------------------------------------------------------------------------
+# region Property Updaters
 
-# Property update function for some ZGSWTOR_PCS_Sliders.
+# Property update functions for Legacy modes properties
+# that produce a partial radio button behavior.
+def mixed_legacy_checkbox_updater(self, context):
+    if context.scene.zgswtor_pcs_mixed_legacy_mode:
+        context.scene.zgswtor_pcs_full_legacy_mode = False
+    node_data_and_sliders_labels_updater(self, context)
+
+def full_legacy_checkbox_updater(self, context):
+    if context.scene.zgswtor_pcs_full_legacy_mode:
+        context.scene.zgswtor_pcs_mixed_legacy_mode = False
+    node_data_and_sliders_labels_updater(self, context)
+
+
+# Property update function for ZGSWTOR_PCS_Sliders.
 # In "interactive mode" it also regenerates the character's model. 
 def node_data_and_sliders_labels_updater(self, context):
     parse_pcs_node_and_sliders(self, context)
@@ -2120,6 +2457,7 @@ def node_data_and_sliders_labels_updater(self, context):
 
 
 def sliders_values_limiter(self, context):
+    # Only affects the sliders whose limits vary between pcs.
     sliders = context.scene.zgswtor_pcs_sliders
     sliders_limits = context.scene.zgswtor_pcs_sliders_limits
     for slider_name in _SLIDERS_NAMES:
@@ -2137,8 +2475,8 @@ def sliders_values_limiter(self, context):
 
 
 # #############################################################################
-# PROPERTY GROUPS
-# region ######################################################################
+# region PROPERTY GROUPS
+# #############################################################################
 
 class ZGSWTOR_PCS_Sliders(PropertyGroup):
     """
@@ -2209,6 +2547,17 @@ class ZGSWTOR_PCS_Sliders(PropertyGroup):
         update=node_data_and_sliders_labels_updater,
     )
     
+    pcs_alignment: IntProperty(
+        # Not a slider per se, but it affects appearance.
+        # has fixed label and upper limits.
+        name="Dark Side Corruption",
+        description="Dark Side Corruption",
+        min=0,
+        max=5,
+        default=0,
+        update=node_data_and_sliders_labels_updater,
+    )
+        
 # PROGRAMMATIC ADDER OF PROPERTIES BY PROPERTY NAME.
 # ADDS PROPERTIES NAMED AFTER THE SLIDERS' INTERNAL NAMES
 # LISTED IN _SLIDERS_NAMES TO THE PROPERTY GROUP ZGSWTOR_PCS_Sliders.
@@ -2227,6 +2576,7 @@ for property_name in _SLIDERS_NAMES:
         max=100,
         update=sliders_values_limiter,
     )
+
 
 # -----------------------------------------------------------------------------
 
@@ -2277,12 +2627,12 @@ for property_name in _SLIDERS_NAMES:
 
 
 # #############################################################################
-# MAIN OPERATOR
-# region ######################################################################
+# region MAIN OPERATOR
+# #############################################################################
 
-class ZGSWTOR_PCS_OT_assembler(Operator):
+class ZGSWTOR_PCS_OT_designer(Operator):
     bl_label = "Assemble Player Character"
-    bl_idname = "zgswtor.pcs_assembler"
+    bl_idname = "zgswtor.pcs_designer"
     bl_description = (
         "Assembles a SWTOR Player Character per its settings in SWTOR's Appearance Designer Kiosk\n"
         "\n"
@@ -2291,7 +2641,14 @@ class ZGSWTOR_PCS_OT_assembler(Operator):
         "customizations and renumbers the rest, while the former lists them all.\n"
         "\n"
         "There is an Appearance Designer Kiosk at the Cartel Bazaar in the Fleets' stations\n"
-        "where a player character's settings can be read for free"
+        "where a player character's settings can be read for free."
+        "\n"
+        "\n"
+        "Requires:\n"
+        "• Setting in the SWTOR IO Tools preferences panel's Resources Directory field\n"
+        "   the path to a SWTOR assets extraction's 'resources' folder.\n"
+        "   Filling the Legacy Resources Directory field is optional.\n"
+
     )
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -2320,8 +2677,8 @@ class ZGSWTOR_PCS_OT_assembler(Operator):
 
 
 # #############################################################################
-# SAVE FILE OPERATOR
-# region ######################################################################
+# region SAVE JSON FILE
+# #############################################################################
 
 """
 Operator that copies the JSON file created by the process_pcs_data() function
@@ -2416,15 +2773,15 @@ class ZGSWTOR_PCS_OT_json_saver(bpy.types.Operator, ExportHelper):
 
 
 # #############################################################################
-# REGISTRATIONS
-# region ######################################################################
+# region REGISTRATIONS
+# #############################################################################
 
 # Registration order: property group before anything that references it.
 classes = (
     ZGSWTOR_PCS_Sliders,
     ZGSWTOR_PCS_Sliders_Labels,
     ZGSWTOR_PCS_Sliders_Limits,
-    ZGSWTOR_PCS_OT_assembler,
+    ZGSWTOR_PCS_OT_designer,
     ZGSWTOR_PCS_OT_json_saver,
 )
 
@@ -2435,10 +2792,15 @@ def register():
     
     if not _SWTOR_DATA:
         load_swtor_bundled_data()
+
     
     for cls in classes:
         bpy.utils.register_class(cls)
 
+    # Set on new document event to trigger a fn that will call _run_once_after_register_or_new_doc
+    if on_document_load not in bpy.app.handlers.load_post:
+        bpy.app.handlers.load_post.append(on_document_load)
+        
     bpy.types.Scene.zgswtor_pcs_sliders        = PointerProperty(type=ZGSWTOR_PCS_Sliders)
     bpy.types.Scene.zgswtor_pcs_sliders_labels = PointerProperty(type=ZGSWTOR_PCS_Sliders_Labels)
     bpy.types.Scene.zgswtor_pcs_sliders_limits = PointerProperty(type=ZGSWTOR_PCS_Sliders_Limits)
@@ -2446,37 +2808,79 @@ def register():
     bpy.types.Scene.zgswtor_pcs_interactive_mode = BoolProperty(
         name="Interactive Mode",
         description=(
-        "In Interactive Mode the character is regenerated at every settings change\n"
-        "instead of waiting for clicking on the 'Assemble' button for confirmation"
+            "In Interactive Mode the character is regenerated at every settings change\n"
+            "instead of waiting for clicking on the 'Assemble' button for confirmation"
         ),
         default=False,
         update=sliders_values_limiter,
     )
     
-    bpy.types.Scene.zgswtor_pcs_legacy_mode = BoolProperty(
-        name="Legacy Materials Mode",
-        description="Use materials from before SWTOR Game Update 7.6's characters modernization",
+    bpy.types.Scene.zgswtor_pcs_mixed_legacy_mode = BoolProperty(
+        name="Mix Legacy Texture Maps With Modern Colors",
+        description=(
+            "Use textures previous to SWTOR Game Update 7.6's characters modernization\n"
+            "while keeping the modern range of colors for skin, hair, facehair, and eyes\n"
+            "\n"
+            "This provides the old-style Player Characters' stylized skin textures\n"
+            "while keeping all the new colors from the modernization available."
+            "\n"
+            "\n"
+            "Requires:\n"
+            "• Setting in the SWTOR IO Tools preferences panel's Legacy Resources Directory field\n"
+            "   the path to a full SWTOR assets extraction's 'resources' folder older than\n"
+            "   Game Update 7.6, or to a version holding just PC .mat and .dds files\n"
+        ),
         default=False,
-        update=node_data_and_sliders_labels_updater,
+        update=mixed_legacy_checkbox_updater,
     )
 
+    bpy.types.Scene.zgswtor_pcs_full_legacy_mode = BoolProperty(
+        name="Full Legacy Character Designer Mode",
+        description=(
+            "Replicate the Character Designer's colors and materials that were available\n"
+            "before SWTOR Game Update 7.6, limiting their numbers accordingly\n"
+            "and showing them in their correct order.\n"
+            "\n"
+            "This allows to enter slider settings from before the modernizations, which might not\n"
+            "match current ones: in some cases their old original values were rearranged instead of\n"
+            "leaving them as they were and just adding the new ones at their end. Typing the settings\n"
+            "from old Character Designer screencaps may produce results that are off by a notch or two.\n"
+            "\n"
+            "For example, Imperial Zabrak Sith Warrior's current skin color #5 was originally #4.\n"
+            "SWTOR automatically re-adjusted the relevant sliders with Game Updates 7.7 and 7.7.1.\n"
+            "\n"
+            "\n"
+            "Requires:\n"
+            "• Setting in the SWTOR IO Tools preferences panel's Legacy Resources Directory field\n"
+            "   the path to a full SWTOR assets extraction's 'resources' folder older than\n"
+            "   Game Update 7.6, or to a version holding just PC .mat and .dds files\n"
+        ),
+        default=False,
+        update=full_legacy_checkbox_updater,
+    )
     
-    # DOESN'T SEEM TO BE NECESSARY
-    # Run once, after the classes and properties' registrations have completed,
-    # in order to produce a first refresh of the UI with default values.
-    # bpy.app.timers.register(_run_pcs_assembler_operator_once_after_register, first_interval=0.0)
-
+    # Run a function that produces a first refresh of the UI with default values
+    # after the classes and properties' registrations have completed, to avoid
+    # showing an incorrect complete set of labels and ranges.
+    # This function is also triggered by new document events defined elsewhere.
+    bpy.app.timers.register(_run_once_after_register_or_new_doc, first_interval=0.1)
+    
+    
 def unregister():
     # Remove the scene attribute first, then unregister classes in reverse.
     del bpy.types.Scene.zgswtor_pcs_sliders
     del bpy.types.Scene.zgswtor_pcs_sliders_labels
     del bpy.types.Scene.zgswtor_pcs_sliders_limits
     del bpy.types.Scene.zgswtor_pcs_interactive_mode
-    del bpy.types.Scene.zgswtor_pcs_legacy_mode
+    del bpy.types.Scene.zgswtor_pcs_full_legacy_mode
+    del bpy.types.Scene.zgswtor_pcs_mixed_legacy_mode
     
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
 
+    if on_document_load in bpy.app.handlers.load_post:
+        bpy.app.handlers.load_post.remove(on_document_load)
+        
 # Allows running the file directly from Blender's Text Editor for testing.
 if __name__ == "__main__":
     register()

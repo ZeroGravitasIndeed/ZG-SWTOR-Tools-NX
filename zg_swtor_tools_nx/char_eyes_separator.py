@@ -5,13 +5,13 @@ import bmesh
 
 # Auxiliary functions
 
-def separate_by_material(obj, material_slot_name):
+def separate_by_material(obj_or_obj_name, material_slot_name):
     """
     Separate the polygons of an object that are associated to one of its material slots into a new object.
 
     Args:
         obj (str or bpy.data.objects): The name of the object or the object itself.
-        material_slot_name (str): The name of the material slot.
+        material_slot_name (str): The name of the material slot (name of the material).
 
     Returns:
         bpy.data.objects: The new object with the separated polygons.
@@ -19,8 +19,10 @@ def separate_by_material(obj, material_slot_name):
     Note:
         The new object preserves attributes such as UVs, vertex groups, and weights.
     """
-    if isinstance(obj, str):
-        obj = bpy.data.objects[obj]
+    if isinstance(obj_or_obj_name, str):
+        obj = bpy.data.objects[obj_or_obj_name]
+    else:
+        obj = obj_or_obj_name
     
 
     # Get the material slot
