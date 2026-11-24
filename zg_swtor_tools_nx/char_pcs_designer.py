@@ -337,12 +337,12 @@ def get_matfile_data(mat_filepath):
         }
 
     # Set Neutral maps for these cases (just in case a parser complains).
-    if not ('UsesFur' in mat_inputs and mat_inputs['UsesFur'] == "True"):
-        mat_inputs['DirectionMap'] = {'value': "/art/defaultassets/black"}
+        if 'DirectionMap' not in mat_inputs:
+            mat_inputs['DirectionMap'] = {'value': "/art/defaultassets/black"}
         
-    if not ('UsesAnimatedWrinkles' in mat_inputs and mat_inputs['UsesAnimatedWrinkles'] == "True"):
-        mat_inputs['animatedWrinkleMap']  = {'value': "/art/defaultassets/flat_w"}
-        mat_inputs['animatedWrinkleMask'] = {'value': "/art/defaultassets/flat_w"}
+    # if not 'UsesAnimatedWrinkles' in mat_inputs:
+    #     mat_inputs['animatedWrinkleMap']  = {'value': "/art/defaultassets/flat_w"}
+    #     mat_inputs['animatedWrinkleMask'] = {'value': "/art/defaultassets/flat_w"}
     
     return mat_inputs
     
@@ -1549,7 +1549,7 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
                         # directionMap not upported right now in Atroxa's add-on, but maybe in Crunch's.
                         # WrinkleMaps have "variable" maps, but naming scheme seems 
                         # Consistent enough for the parser to deduce them with just these:
-                        "directionMap":         hair_material_data["DirectionMap"]["value"],  # Filled with a default black if none
+                        "directionMap":         hair_material_data["DirectionMap"]["value"] + ".dds",  # Filled with a default black if none
                     },
                     "otherValues": {
                         "derived": hair_material_data["Derived"],
@@ -1628,7 +1628,7 @@ def process_pcs_data(self, context, ami_data, bodytype_code, pcs_node_fqn):
                             # directionMap not upported right now in Atroxa's add-on, but maybe in Crunch's.
                             # WrinkleMaps have "variable" maps, but naming scheme seems 
                             # Consistent enough for the parser to deduce them with just these:
-                            "directionMap":     facehair_material_data["DirectionMap"]["value"],  # Filled with a default black if none
+                            "directionMap":     facehair_material_data["DirectionMap"]["value"] + ".dds",  # Filled with a default black if none
                         }
                     },
                     "otherValues": {
