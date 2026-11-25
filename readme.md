@@ -38,4 +38,4 @@ The **ZG SWTOR Tools NX** keeps on having in its Sidebar's tab a **Status** pane
 
 ### This is a WIP
 
-Be gentle.
+Expect Kill Bill sirens at any moment.
