@@ -1,9 +1,17 @@
 ## ZeroGravitas SWTOR Tools Next (beta)
 (Yep, we are doing the "Next" thang 😅)
 
-**The ZG SWTOR Tools NX is the successor to the original [ZG SWTOR Tools](https://github.com/SWTOR-Slicers/ZG-SWTOR-Tools)**.
+---
+### DOWNLOADS
+* Latest releases of the ZG SWTOR Tools NX add-on are [**HERE**](https://github.com/SWTOR-Slicers/ZG-SWTOR-Tools-NX/releases).
+* Latest releases of the companion SWTOR IO Tools add-on are [**HERE**](https://github.com/UnconventionalError/SWTOR-Import-Export-Tools/releases).
 
-The same way the latter used the [**.granny2 Plug-in**](https://github.com/SWTOR-Slicers/Granny2-Plug-In-Blender-2.8x) (AKA .gr2 Importer) to gain object and character import features and build upon them, this one uses the new, vastly superior [**SWTOR Input-Output Tools**](https://github.com/UnconventionalError/SWTOR-Import-Export-Tools/releases) add-on, so capable that it is able to do Character and Area assembling completely on its own.
+---
+
+
+### The ZG SWTOR Tools NX is the successor to the original [ZG SWTOR Tools](https://github.com/SWTOR-Slicers/ZG-SWTOR-Tools)
+
+The same way the latter used the [**.granny2 Plug-in**](https://github.com/SWTOR-Slicers/Granny2-Plug-In-Blender-2.8x) (AKA .gr2 Importer) to gain object and character import features and build upon them, this one uses the new, vastly superior [**SWTOR Input-Output Tools**](https://github.com/UnconventionalError/SWTOR-Import-Export-Tools/) add-on, so capable that it is able to do Character and Area assembling completely on its own.
 
 As a consequence, the **ZG SWTOR Tools NX** drops such features, now redundant, and will focus on new stuff, such as:
 * A **Character Designer** (in underwear so far) that can replace TORCommunity.com's missing one.
@@ -30,7 +38,7 @@ Both the .gr2 importer and the ZG SWTOR Tools still work up to the current Blend
 
 ### Installation
 
-The new usual for Blender 4.x and 5.x: **just drop them onto any Blender window**. If no [**SWTOR IO Tools**](https://github.com/UnconventionalError/SWTOR-Import-Export-Tools/releases) add-on is present, the ZG Tools NX features that depend on it will appear in red, disabled.
+The new usual for Blender 4.x and 5.x: **just drop them onto any Blender window**. If no [**SWTOR IO Tools**](https://github.com/UnconventionalError/SWTOR-Import-Export-Tools/) add-on is present, the ZG Tools NX features that depend on it will appear in red, disabled.
 
 ### Preferences
 
