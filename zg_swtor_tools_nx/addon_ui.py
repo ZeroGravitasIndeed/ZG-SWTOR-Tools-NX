@@ -300,11 +300,13 @@ class ZGSWTOR_PT_character_designer(bpy.types.Panel):
     
         # Assemble button bound to the operator; scale_y enlarges it.
         split_row = split.row()
+        split_row.scale_y = 1.8
         split_row.operator("zgswtor.pcs_designer", text="Assemble")
         split_row.enabled = not context.scene.zgswtor_pcs_interactive_mode
         
         # Save as JSON button
         save_json_row = tool_section.row()
+        save_json_row.scale_y = 0.9
         # save_json_row.enabled = checks["swtor_io_tools"] and checks["resources"]
         # save_json_row.alert = not split.enabled
 
